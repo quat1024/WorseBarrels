@@ -1,0 +1,16 @@
+[
+{
+  "modid": "worsebarrels",
+  "name": "Worse Barrels",
+  "description": "A user interface for your items, and nothing more. Terrible for mass storage. By design!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["quaternary"],
+  "credits": "Your MOM",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
