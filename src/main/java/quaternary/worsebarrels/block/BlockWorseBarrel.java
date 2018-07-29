@@ -1,4 +1,4 @@
-package quaternary.worsebarrels;
+package quaternary.worsebarrels.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -8,27 +8,24 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 import javax.annotation.Nullable;
 
 public class BlockWorseBarrel extends Block {
 	public static final PropertyEnum<EnumWorseBarrelOrientation> ORIENTATION = PropertyEnum.create("orientation", EnumWorseBarrelOrientation.class);
 	
-	public BlockWorseBarrel(String name, Material mat) {
+	public BlockWorseBarrel(Material mat) {
 		super(mat, MapColor.BROWN);
 		
 		setHardness(1.2f);
 		setResistance(1f);
 		setSoundType(SoundType.WOOD);
-		
-		setRegistryName(new ResourceLocation(WorseBarrels.MODID, "barrel_" + name));
-		setUnlocalizedName(WorseBarrels.MODID + "." + name);
-		setCreativeTab(WorseBarrelsCreativeTab.INST);
 		
 		setDefaultState(getDefaultState().withProperty(ORIENTATION, EnumWorseBarrelOrientation.UPRIGHT_NORTH));
 	}

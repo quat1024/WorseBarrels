@@ -1,11 +1,11 @@
-package quaternary.worsebarrels.cap;
+package quaternary.worsebarrels.tile;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.items.*;
-import quaternary.worsebarrels.*;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
+import quaternary.worsebarrels.Util;
 
 import javax.annotation.Nonnull;
 

@@ -1,4 +1,4 @@
-package quaternary.worsebarrels;
+package quaternary.worsebarrels.block;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
