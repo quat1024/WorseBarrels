@@ -13,6 +13,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import quaternary.worsebarrels.WorseBarrels;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 import javax.annotation.Nullable;
@@ -81,6 +82,19 @@ public class BlockWorseBarrel extends Block {
 	
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		return getDefaultState().withProperty(ORIENTATION, EnumWorseBarrelOrientation.fromEntityLiving(pos, placer));
+		EnumWorseBarrelOrientation orient;
+		WorseBarrels.LOGGER.info(placer.rotationPitch);
+		
+		//If they are looking up or down, or aiming at the top of a block while looking sideways, use player look
+		//The second case is especially important since it allows for placing upright barrels
+		//despite clicking against a floor or ceiling
+		if(Math.abs(placer.rotationPitch) > 65 || facing.getAxis() == EnumFacing.Axis.Y) {
+			orient = EnumWorseBarrelOrientation.fromEntityLiving(pos, placer);
+		} else {
+			//Face away from the wall they clicked
+			orient = EnumWorseBarrelOrientation.fromHorizontalFacing(facing);
+		}
+		
+		return getDefaultState().withProperty(ORIENTATION, orient);
 	}
 }
