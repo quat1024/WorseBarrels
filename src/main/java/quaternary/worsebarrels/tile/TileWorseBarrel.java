@@ -34,26 +34,25 @@ public class TileWorseBarrel extends TileEntity {
 		return ItemHandlerHelper.calcRedstoneFromInventory(handler);
 	}
 	
+	public boolean isEmpty() {
+		return Util.isHandlerEmpty(handler);
+	}
+	
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound cmp) {
-		cmp.setTag("Contents", handler.writeNBT());
-		
+		writeItemsOnlyToNBT(cmp);
 		return super.writeToNBT(cmp);
+	}
+	
+	public NBTTagCompound writeItemsOnlyToNBT(NBTTagCompound cmp) {
+		cmp.setTag("Contents", handler.writeNBT());
+		return cmp;
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound cmp) {
-		if(world == null) { //for some reason it's like that on the serve
-			handler.readNBT(cmp.getCompoundTag("Contents"));
-		}
+		handler.readNBT(cmp.getCompoundTag("Contents"));
 		super.readFromNBT(cmp);
-	}
-	
-	public void drop() {
-		for(ItemStack stack : handler.getAllStacks()) {
-			InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
-		}
-		Util.clearHandler(handler);
 	}
 	
 	@CapabilityInject(IItemHandler.class)

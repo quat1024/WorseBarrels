@@ -12,7 +12,9 @@ import javax.annotation.Nonnull;
 public class BarrelItemHandler extends ItemStackHandler {
 	TileWorseBarrel tile;
 	
-	static final int STACK_COUNT = 8;
+	public static final int STACK_COUNT = 8;
+	public static final String STACK_KEY = "BarrelItem";
+	public static final String COUNT_KEY = "BarrelCount";
 	
 	public BarrelItemHandler(TileWorseBarrel tile) {
 		super(STACK_COUNT);
@@ -57,10 +59,6 @@ public class BarrelItemHandler extends ItemStackHandler {
 		return runningCount;
 	}
 	
-	public NonNullList<ItemStack> getAllStacks() {
-		return stacks;
-	}
-	
 	public NBTTagCompound writeNBT() {
 		NBTTagCompound cmp = new NBTTagCompound();
 		ItemStack firstStack = Util.withStackSize(getFirstNonemptyStack(), 1);
@@ -69,16 +67,16 @@ public class BarrelItemHandler extends ItemStackHandler {
 		NBTTagCompound item = new NBTTagCompound();
 		firstStack.writeToNBT(item);
 		
-		cmp.setTag("BarrelItem", item);
-		cmp.setInteger("BarrelCount", count);
+		cmp.setTag(STACK_KEY, item);
+		cmp.setInteger(COUNT_KEY, count);
 		return cmp;
 	}
 	
 	public void readNBT(NBTTagCompound cmp) {
 		Util.clearHandler(this);
 		
-		ItemStack stack = new ItemStack(cmp.getCompoundTag("BarrelItem"));
-		stack.setCount(cmp.getInteger("BarrelCount"));
+		ItemStack stack = new ItemStack(cmp.getCompoundTag(STACK_KEY));
+		stack.setCount(cmp.getInteger(COUNT_KEY));
 		ItemHandlerHelper.insertItem(this, stack, false);
 	}
 }
