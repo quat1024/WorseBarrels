@@ -44,12 +44,20 @@ public enum EnumWorseBarrelOrientation implements IStringSerializable{
 	}
 	
 	public static EnumWorseBarrelOrientation fromHorizontalFacing(EnumFacing facing) {
-		switch (facing) {
+		switch(facing) {
 			case NORTH: return UPRIGHT_NORTH;
 			case EAST:  return UPRIGHT_EAST;
 			case SOUTH: return UPRIGHT_SOUTH;
 			case WEST:  return UPRIGHT_WEST;
 			default: throw new IllegalArgumentException("Not a horizontal facing: " + facing);
+		}
+	}
+	
+	public static EnumWorseBarrelOrientation fromFacingDirectional(EnumFacing facing) {
+		switch(facing) {
+			case UP: return CEILING_NORTH;
+			case DOWN: return FLOOR_NORTH;
+			default: return fromHorizontalFacing(facing);
 		}
 	}
 	

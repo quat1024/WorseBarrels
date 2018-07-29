@@ -51,8 +51,12 @@ public class TileWorseBarrel extends TileEntity {
 	
 	@Override
 	public void readFromNBT(NBTTagCompound cmp) {
-		handler.readNBT(cmp.getCompoundTag("Contents"));
+		readItemsOnlyFromNBT(cmp);
 		super.readFromNBT(cmp);
+	}
+	
+	public void readItemsOnlyFromNBT(NBTTagCompound cmp) {
+		handler.readNBT(cmp.getCompoundTag("Contents"));
 	}
 	
 	@CapabilityInject(IItemHandler.class)
