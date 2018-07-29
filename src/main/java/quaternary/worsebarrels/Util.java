@@ -1,8 +1,7 @@
 package quaternary.worsebarrels;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.*;
 
 public class Util {
 	public static ItemStack withStackSize(ItemStack stack, int stackSize) {
@@ -23,6 +22,28 @@ public class Util {
 		}
 		
 		return true;
+	}
+	
+	public static ItemStack extractItem(IItemHandler handler, int count, boolean fake) {
+		ItemStack runningStack = ItemStack.EMPTY;
+		
+		for(int i = 0, slotCount = handler.getSlots(); i < slotCount; i++) {
+			ItemStack fakeStack = handler.extractItem(i, count, true);
+			
+			if(!fakeStack.isEmpty() && fakeStack.getCount() <= count) {
+				ItemStack realStack = handler.extractItem(i, count, fake);
+				
+				if(runningStack.isEmpty()) {
+					runningStack = realStack.copy();
+					count -= realStack.getCount();
+				} else if(ItemHandlerHelper.canItemStacksStack(runningStack, realStack)) {
+					runningStack.grow(realStack.getCount());
+					count -= realStack.getCount();
+				}
+			}
+		}
+		
+		return runningStack;
 	}
 	
 	//Range remap function. Useful!

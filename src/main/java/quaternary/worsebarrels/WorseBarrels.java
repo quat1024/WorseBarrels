@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import quaternary.worsebarrels.block.WorseBarrelsBlocks;
 import quaternary.worsebarrels.item.WorseBarrelsItems;
+import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 @Mod(modid = WorseBarrels.MODID, name = WorseBarrels.NAME, version = WorseBarrels.VER)
@@ -40,6 +41,7 @@ public class WorseBarrels {
 	@Mod.EventHandler
 	public static void preinit(FMLPreInitializationEvent e) {
 		WorseBarrelsConfig.preinit(e);
+		WorseBarrelsPacketHandler.preinit();
 	}
 	
 	@SubscribeEvent

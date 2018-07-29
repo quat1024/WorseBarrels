@@ -8,6 +8,8 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,7 +22,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.*;
 import quaternary.worsebarrels.WorseBarrels;
+import quaternary.worsebarrels.net.MessageRequestBarrelItem;
+import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
 import quaternary.worsebarrels.tile.BarrelItemHandler;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
@@ -64,6 +69,19 @@ public class BlockWorseBarrel extends Block {
 		if(te instanceof TileWorseBarrel) {
 			return ((TileWorseBarrel)te).getComparatorOverride();
 		} else return 0;
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		//TODO move to PlayerInteractEvent so players can sneak click blocks while holding things
+		//Also make this extraction not insertion x)
+		if(state.getValue(ORIENTATION).facing != facing) return false;
+		
+		if(world.isRemote) {
+			WorseBarrelsPacketHandler.sendToServer(new MessageRequestBarrelItem(pos, player.isSneaking()));
+		}
+		
+		return true;
 	}
 	
 	@Override
