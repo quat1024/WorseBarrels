@@ -34,17 +34,16 @@ public class WorseBarrelsConfig {
 	}
 	
 	private static void readConfig() {
-		MAX_NESTING_DEPTH = config.getInt("maxNestingDepth", "balance", 5, 0, 8, "How many layers of nested barrels-inside-barrels are allowed? Set to 0 to disable nesting.");
+		config.setCategoryComment("balance", "Balancing features!");
 		
-		LEFT_CLICK_ACTION = getEnum(config, "leftClickAction", "controls", EnumBarrelAction.INSERT_STACK, "What happens when you left click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
-		
-		SNEAK_LEFT_CLICK_ACTION = getEnum(config, "sneakLeftClickAction", "controls", EnumBarrelAction.INSERT_ONE, "What happens when you left click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
-		
-		RIGHT_CLICK_ACTION = getEnum(config, "rightClickAction", "controls", EnumBarrelAction.REQUEST_STACK, "What happens when you right click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
-		
-		SNEAK_RIGHT_CLICK_ACTION = getEnum(config, "sneakRightClickAction", "controls", EnumBarrelAction.REQUEST_ONE, "What happens when you right click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		MAX_NESTING_DEPTH = config.getInt("maxNestingDepth", "balance", 2, 0, 8, "How many layers of nested barrels-inside-barrels are allowed? Set to 0 to disable nesting.");
 		
 		config.setCategoryComment("controls", "Interactions with the barrel. These options have no effect on a standalone server.");
+		
+		LEFT_CLICK_ACTION = getEnum(config, "leftClickAction", "controls", EnumBarrelAction.INSERT_ONE, "What happens when you left click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		SNEAK_LEFT_CLICK_ACTION = getEnum(config, "sneakLeftClickAction", "controls", EnumBarrelAction.INSERT_STACK, "What happens when you left click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		RIGHT_CLICK_ACTION = getEnum(config, "rightClickAction", "controls", EnumBarrelAction.REQUEST_ONE, "What happens when you right click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		SNEAK_RIGHT_CLICK_ACTION = getEnum(config, "sneakRightClickAction", "controls", EnumBarrelAction.REQUEST_STACK, "What happens when you right click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
 		
 		if(config.hasChanged()) config.save();
 	}
