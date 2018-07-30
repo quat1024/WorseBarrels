@@ -16,14 +16,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.*;
 import quaternary.worsebarrels.WorseBarrels;
+import quaternary.worsebarrels.WorseBarrelsConfig;
 import quaternary.worsebarrels.net.MessageRequestBarrelItem;
 import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
 import quaternary.worsebarrels.tile.BarrelItemHandler;
@@ -69,6 +71,27 @@ public class BlockWorseBarrel extends Block {
 		if(te instanceof TileWorseBarrel) {
 			return ((TileWorseBarrel)te).getComparatorOverride();
 		} else return 0;
+	}
+	
+	@Override
+	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
+		if(world.isRemote) {
+			//This is slightly janky, but works well enough unless the barrel is only slightly within view.
+			RayTraceResult res = world.rayTraceBlocks(player.getPositionVector(), new Vec3d(pos).add(.5, .5, .5));
+			if(res != null && res.sideHit != null) {
+				IBlockState barrelState = world.getBlockState(pos);
+				if(barrelState.getValue(ORIENTATION).facing != res.sideHit) return;
+				
+				IMessage message;
+				if(player.isSneaking()) {
+					message = WorseBarrelsConfig.SNEAK_LEFT_CLICK_ACTION.getPacket().apply(pos);
+				} else {
+					message = WorseBarrelsConfig.LEFT_CLICK_ACTION.getPacket().apply(pos);
+				}
+				
+				WorseBarrelsPacketHandler.sendToServer(message);
+			}
+		}
 	}
 	
 	@Override

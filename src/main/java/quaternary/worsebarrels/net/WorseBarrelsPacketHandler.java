@@ -14,7 +14,6 @@ public class WorseBarrelsPacketHandler {
 		
 		NET.registerMessage(MessageRequestBarrelItem.Handler.class, MessageRequestBarrelItem.class, 0, Side.SERVER);
 		NET.registerMessage(MessageInsertBarrelItem.Handler.class, MessageInsertBarrelItem.class, 1, Side.SERVER);
-		NET.registerMessage(MessageLeftClickBarrel.Handler.class, MessageLeftClickBarrel.class, 2, Side.CLIENT);
 	}
 	
 	public static void sendToServer(IMessage message) {
