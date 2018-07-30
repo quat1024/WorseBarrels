@@ -3,6 +3,7 @@ package quaternary.worsebarrels;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -17,16 +18,19 @@ import quaternary.worsebarrels.tile.TileWorseBarrel;
 @Mod.EventBusSubscriber(modid = WorseBarrels.MODID)
 public class CommonEvents {
 	@SubscribeEvent
-	public static void leftClick(PlayerInteractEvent.LeftClickBlock e) {
-		if(FMLCommonHandler.instance().getEffectiveSide().isClient()) return;
+	public static void leftClick(PlayerInteractEvent.LeftClickBlock e) {		
+		if(e.getHand() != EnumHand.MAIN_HAND) return; //TODO proper offhand support
 		
-		handleClick(e.getWorld(), e.getPos(), e.getEntityPlayer(), e.getFace(), () -> {
-			WorseBarrelsPacketHandler.sendTo(new MessageLeftClickBarrel(e.getPos(), e.getEntityPlayer().isSneaking()), (EntityPlayerMP) e.getEntityPlayer());
+		handleClick(e.getWorld(), e.getPos(), e.getFace(), () -> {
+			if(FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+				//TODO this spams super fast, what can i doooo
+				WorseBarrelsPacketHandler.sendTo(new MessageLeftClickBarrel(e.getPos(), e.getEntityPlayer().isSneaking()), (EntityPlayerMP) e.getEntityPlayer());
+			}
 			e.setUseItem(Event.Result.DENY);
 		});
 	}
 	
-	public static void handleClick(World world, BlockPos pos, EntityPlayer player, EnumFacing clickedSide, Runnable ifBarrel) {
+	public static void handleClick(World world, BlockPos pos, EnumFacing clickedSide, Runnable ifBarrel) {
 		if(world.getTileEntity(pos) instanceof TileWorseBarrel) {
 			EnumFacing barrelFacing = world.getBlockState(pos).getValue(BlockWorseBarrel.ORIENTATION).facing;
 			

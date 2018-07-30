@@ -9,9 +9,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
-import quaternary.worsebarrels.CommonEvents;
-import quaternary.worsebarrels.WorseBarrels;
+import quaternary.worsebarrels.*;
 import quaternary.worsebarrels.item.WorseBarrelsItems;
 import quaternary.worsebarrels.net.*;
 
@@ -27,11 +27,21 @@ public class ClientEvents {
 	
 	@SubscribeEvent
 	public static void rightClick(PlayerInteractEvent.RightClickBlock e) {
-		if(FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
-		if(e.getHand() == EnumHand.OFF_HAND) return; //TODO Proper offhand support
+		if(e.getHand() != EnumHand.MAIN_HAND) return; //TODO proper offhand support
 		
-		CommonEvents.handleClick(e.getWorld(), e.getPos(), e.getEntityPlayer(), e.getFace(), () -> {
-			WorseBarrelsPacketHandler.sendToServer(new MessageInsertBarrelItem(e.getPos(), e.getEntityPlayer().isSneaking()));
+		CommonEvents.handleClick(e.getWorld(), e.getPos(), e.getFace(), () -> {
+			if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+				IMessage message;
+				
+				if(e.getEntityPlayer().isSneaking()) {
+					message = WorseBarrelsConfig.SNEAK_RIGHT_CLICK_ACTION.getPacket().apply(e.getPos());
+				} else {
+					message = WorseBarrelsConfig.RIGHT_CLICK_ACTION.getPacket().apply(e.getPos());
+				}
+				
+				WorseBarrelsPacketHandler.sendToServer(message);
+			}
+			
 			e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
 			e.setUseItem(Event.Result.DENY);
 		});
