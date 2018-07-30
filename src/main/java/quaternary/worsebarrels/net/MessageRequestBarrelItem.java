@@ -50,7 +50,7 @@ public class MessageRequestBarrelItem implements IMessage {
 				double reachDistanceSq = reachAttr.getAttributeValue() * reachAttr.getAttributeValue();
 				double barrelDistance = message.barrelPos.distanceSq(requester.getPosition());
 				if(reachDistanceSq < barrelDistance + 1) {
-					return; //They are too far away to actually click the barrel.
+					return; //Too far away to actually click the barrel...
 				}
 				
 				TileEntity tile = ws.getTileEntity(message.barrelPos);

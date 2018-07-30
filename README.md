@@ -1,6 +1,8 @@
 Worse Barrels
 =============
 
+Worse Barrels is an opinionated barrel mod.
+
 I've found a lot of "barrel" mods aren't really to my satisfaction; mainly because they can hold hundreds, even thousands or tens-of-thousands of *stacks* of items in just one block space. Some even provide wireless item transport, sorting, or even basic autocrafting functionality. While these features - don't get me wrong! - are great, and extremely convenient, I'm just not a player that enjoys things being convenient - give me challenges to store and manipulate that many items, don't let me just throw upgrades at the wall until all my problems go away.
 
 And thus, Worse Barrels.

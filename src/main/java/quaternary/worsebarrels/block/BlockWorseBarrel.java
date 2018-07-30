@@ -72,19 +72,6 @@ public class BlockWorseBarrel extends Block {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		//TODO move to PlayerInteractEvent so players can sneak click blocks while holding things
-		//Also make this extraction not insertion x)
-		if(state.getValue(ORIENTATION).facing != facing) return false;
-		
-		if(world.isRemote) {
-			WorseBarrelsPacketHandler.sendToServer(new MessageRequestBarrelItem(pos, player.isSneaking()));
-		}
-		
-		return true;
-	}
-	
-	@Override
 	public EnumPushReaction getPushReaction(IBlockState state) {
 		return EnumPushReaction.DESTROY;
 	}
