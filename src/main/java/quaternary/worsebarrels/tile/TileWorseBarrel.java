@@ -1,8 +1,6 @@
 package quaternary.worsebarrels.tile;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -14,6 +12,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import quaternary.worsebarrels.Util;
 import quaternary.worsebarrels.block.BlockWorseBarrel;
+import quaternary.worsebarrels.etc.BarrelItemHandler;
 
 import javax.annotation.Nullable;
 
@@ -27,7 +26,7 @@ public class TileWorseBarrel extends TileEntity {
 	BarrelItemHandler handler;
 	
 	public TileWorseBarrel() {
-		handler = new BarrelItemHandler(this);
+		handler = new BarrelTileItemHandler(this);
 	}
 	
 	public int getComparatorOverride() {
