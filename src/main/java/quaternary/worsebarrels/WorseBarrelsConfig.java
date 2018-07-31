@@ -3,6 +3,7 @@ package quaternary.worsebarrels;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 @Mod.EventBusSubscriber
 public class WorseBarrelsConfig {
 	public static int MAX_NESTING_DEPTH;
+	public static int EMPTY_STACK_SIZE;
+	public static int FILLED_STACK_SIZE;
 	
 	public static EnumBarrelAction LEFT_CLICK_ACTION;
 	public static EnumBarrelAction SNEAK_LEFT_CLICK_ACTION;
@@ -37,6 +40,20 @@ public class WorseBarrelsConfig {
 		config.setCategoryComment("balance", "Balancing features!");
 		
 		MAX_NESTING_DEPTH = config.getInt("maxNestingDepth", "balance", 2, 0, 8, "How many layers of nested barrels-inside-barrels are allowed? Set to 0 to disable nesting.");
+		
+		boolean bigboisOk = Loader.isModLoaded("stackup");
+		
+		EMPTY_STACK_SIZE = config.getInt("emptyStackSize", "balance", 64, 1, Integer.MAX_VALUE, "How many empty barrels fit in a single stack?");
+		
+		FILLED_STACK_SIZE = config.getInt("filledStackSize", "balance", 8, 1, Integer.MAX_VALUE, "How many non-empty barrels fit in a single stack?");
+		
+		if(!bigboisOk && (EMPTY_STACK_SIZE > 64 || FILLED_STACK_SIZE > 64)) {
+			WorseBarrels.LOGGER.info("****************************************");
+			WorseBarrels.LOGGER.info("Barrel stack sizes are set to over 64, but StackUp isn't installed!");
+			WorseBarrels.LOGGER.info("This won't actually work ingame, and things will be terribly buggy!");
+			WorseBarrels.LOGGER.info("Please consider installing StackUp by asie!");
+			WorseBarrels.LOGGER.info("****************************************");
+		}
 		
 		config.setCategoryComment("controls", "Interactions with the barrel. These options have no effect on a standalone server.");
 		
