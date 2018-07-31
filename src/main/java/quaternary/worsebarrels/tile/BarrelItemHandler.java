@@ -32,22 +32,24 @@ public class BarrelItemHandler extends ItemStackHandler {
 		ItemStack firstStack = getFirstNonemptyStack();
 		
 		boolean ok = firstStack.isEmpty() || ItemHandlerHelper.canItemStacksStack(firstStack, insertionStack);
-		ok &= getNestedBarrelDepth(insertionStack) < WorseBarrelsConfig.MAX_NESTING_DEPTH;
+		ok &= getNestedBarrelDepth(insertionStack) <= WorseBarrelsConfig.MAX_NESTING_DEPTH;
 		
 		if(ok) {
 			return super.insertItem(slot, insertionStack, simulate);
 		} else return insertionStack;
 	}
 	
-	private int getNestedBarrelDepth(ItemStack stack) {
-		ItemStack stack2 = stack;
+	private int getNestedBarrelDepth(ItemStack stack_) {
+		ItemStack stack = stack_;
 		int depth = 0;
 		
-		while(Block.getBlockFromItem(stack2.getItem()) instanceof BlockWorseBarrel) {
-			if(stack2.hasTagCompound()) {
+		while(Block.getBlockFromItem(stack.getItem()) instanceof BlockWorseBarrel) {
+			depth++;
+			
+			if(stack.hasTagCompound()) {
 				NBTTagCompound innerNBT;
-				if(stack2.getTagCompound().hasKey("BlockEntityTag")) {
-					innerNBT = stack2.getTagCompound().getCompoundTag("BlockEntityTag");
+				if(stack.getTagCompound().hasKey("BlockEntityTag")) {
+					innerNBT = stack.getTagCompound().getCompoundTag("BlockEntityTag");
 				} else break;
 				
 				NBTTagCompound innerContents;
@@ -60,8 +62,7 @@ public class BarrelItemHandler extends ItemStackHandler {
 					innerItemNBT = innerContents.getCompoundTag(STACK_KEY);
 				} else break;
 				
-				stack2 = new ItemStack(innerItemNBT);
-				depth++;
+				stack = new ItemStack(innerItemNBT);
 			} else break;
 		}
 		
