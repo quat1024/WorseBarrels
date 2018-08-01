@@ -18,7 +18,7 @@ import quaternary.worsebarrels.item.WorseBarrelsItems;
 import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
-@Mod(modid = WorseBarrels.MODID, name = WorseBarrels.NAME, version = WorseBarrels.VER)
+@Mod(modid = WorseBarrels.MODID, name = WorseBarrels.NAME, version = WorseBarrels.VER, guiFactory = "quaternary.worsebarrels.etc.WorseBarrelsGuiFactory")
 @Mod.EventBusSubscriber(modid = WorseBarrels.MODID)
 public class WorseBarrels {
 	public static final String MODID = "worsebarrels";
