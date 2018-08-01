@@ -17,11 +17,20 @@ public class Util {
 	}
 	
 	public static boolean isHandlerEmpty(IItemHandler handler) {
-		for(int i = 0, slots = handler.getSlots(); i < slots; i++) {
+		for(int i = 0; i < handler.getSlots(); i++) {
 			if(!handler.getStackInSlot(i).isEmpty()) return false;
 		}
 		
 		return true;
+	}
+	
+	public static ItemStack getFirstStackInHandler(IItemHandler handler) {
+		for(int i = 0; i < handler.getSlots(); i++) {
+			ItemStack stack = handler.getStackInSlot(i);
+			if(!stack.isEmpty()) return stack;
+		}
+		
+		return ItemStack.EMPTY;
 	}
 	
 	public static ItemStack extractItem(IItemHandler handler, int count, boolean fake) {

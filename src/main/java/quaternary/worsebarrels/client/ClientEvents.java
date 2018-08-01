@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import quaternary.worsebarrels.*;
 import quaternary.worsebarrels.block.BlockWorseBarrel;
+import quaternary.worsebarrels.client.tesr.RenderTileWorseBarrel;
 import quaternary.worsebarrels.item.WorseBarrelsItems;
 import quaternary.worsebarrels.net.*;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
@@ -28,6 +30,8 @@ public class ClientEvents {
 			ModelResourceLocation mrl = new ModelResourceLocation(i.getRegistryName(), "inventory");
 			ModelLoader.setCustomModelResourceLocation(i, 0, mrl);
 		});
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(TileWorseBarrel.class, new RenderTileWorseBarrel());
 	}
 	
 	@SubscribeEvent

@@ -28,3 +28,5 @@ Planned features:
 ---
 
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+Ironically enough, despite being made as a reaction to me disliking Storage Drawer's balance, I borrowed nine lines of code from it, in `RenderTileWorseBarrel.java`. Absolute lifesaver. Storage Drawers is MIT and its license is therefore reproduced in STORAGE_DRAWERS_LICENSE.md.

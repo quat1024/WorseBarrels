@@ -2,6 +2,8 @@ package quaternary.worsebarrels.tile;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -58,6 +60,25 @@ public class TileWorseBarrel extends TileEntity {
 		handler.readNBT(cmp.getCompoundTag("Contents"));
 	}
 	
+	@Override
+	public void markDirty() {
+		super.markDirty();
+		
+		IBlockState barrelState = world.getBlockState(pos);
+		world.notifyBlockUpdate(pos, barrelState, barrelState, 2);
+	}
+	
+	@Nullable
+	@Override
+	public SPacketUpdateTileEntity getUpdatePacket() {
+		return new SPacketUpdateTileEntity(pos, 69, writeToNBT(new NBTTagCompound()));
+	}
+	
+	@Override
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		readFromNBT(pkt.getNbtCompound());
+	}
+	
 	@CapabilityInject(IItemHandler.class)
 	public static Capability<IItemHandler> ITEM_HANDLER = null;
 	
@@ -77,5 +98,4 @@ public class TileWorseBarrel extends TileEntity {
 			return (T) handler;
 		} else return super.getCapability(capability, facing);
 	}
-	
 }
