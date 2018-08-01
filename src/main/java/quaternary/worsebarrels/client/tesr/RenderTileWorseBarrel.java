@@ -13,6 +13,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import quaternary.worsebarrels.Util;
 import quaternary.worsebarrels.block.BlockWorseBarrel;
+import quaternary.worsebarrels.block.EnumWorseBarrelOrientation;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBarrel> {
@@ -25,7 +26,8 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 			if(first.isEmpty()) return;
 			IBlockState barrelState = te.getWorld().getBlockState(te.getPos());
 			if(!(barrelState.getBlock() instanceof BlockWorseBarrel)) return;
-			EnumFacing barrelFacing = barrelState.getValue(BlockWorseBarrel.ORIENTATION).facing;
+			EnumWorseBarrelOrientation orientation = barrelState.getValue(BlockWorseBarrel.ORIENTATION);
+			EnumFacing barrelFacing = orientation.facing;
 			
 			Minecraft mc = Minecraft.getMinecraft();
 			RenderItem ri = mc.getRenderItem();
@@ -34,8 +36,14 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 			GlStateManager.translate(x + .5, y + .5, z + .5);
 			
 			//TODO actual up/down rotations
-			GlStateManager.rotate(-barrelFacing.getHorizontalAngle() - 90, 0, 1, 0);
-			GlStateManager.translate(6/16d + .001, 0, 0); //<-- additional .001 to avoid Z fighting
+			if(barrelFacing.getHorizontalIndex() != -1) {
+				GlStateManager.rotate(-barrelFacing.getHorizontalAngle() - 90, 0, 1, 0);
+			} else {
+				GlStateManager.rotate(-orientation.secondaryFacing.getHorizontalAngle() - 90, 0, 1, 0);
+				GlStateManager.rotate(barrelFacing == EnumFacing.UP ? 90 : -90, 0, 0, 1);
+			}
+			
+			GlStateManager.translate(6 / 16d + .001, 0, 0); //<-- additional .001 to avoid Z fighting
 			GlStateManager.rotate(90, 0, 1, 0);
 			GlStateManager.scale(.6, .6, .001); //<-- Flatten the item out
 			

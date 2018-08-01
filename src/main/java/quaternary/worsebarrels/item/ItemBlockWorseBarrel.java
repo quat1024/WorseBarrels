@@ -20,7 +20,7 @@ public class ItemBlockWorseBarrel extends ItemBlock {
 	
 	@Override
 	public int getItemStackLimit(ItemStack stack) {
-		//TODO use itme capability to determine filledness
+		//TODO use item capability to determine filledness
 		if(stack.hasTagCompound() && stack.getTagCompound().hasKey("BlockEntityTag")) {
 			return WorseBarrelsConfig.FILLED_STACK_SIZE;
 		} else return WorseBarrelsConfig.EMPTY_STACK_SIZE;

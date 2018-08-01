@@ -8,19 +8,22 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Locale;
 
 public enum EnumWorseBarrelOrientation implements IStringSerializable{
-	UPRIGHT_NORTH(EnumFacing.NORTH), UPRIGHT_SOUTH(EnumFacing.SOUTH),
-	UPRIGHT_EAST(EnumFacing.EAST),   UPRIGHT_WEST(EnumFacing.WEST),
+	UPRIGHT_NORTH(EnumFacing.NORTH, EnumFacing.UP), UPRIGHT_SOUTH(EnumFacing.SOUTH, EnumFacing.UP),
+	UPRIGHT_EAST(EnumFacing.EAST, EnumFacing.UP),   UPRIGHT_WEST(EnumFacing.WEST, EnumFacing.UP),
 	
-	CEILING_NORTH(EnumFacing.UP),    CEILING_SOUTH(EnumFacing.UP),
-	CEILING_EAST(EnumFacing.UP),     CEILING_WEST(EnumFacing.UP),
+	CEILING_NORTH(EnumFacing.UP, EnumFacing.NORTH),   CEILING_SOUTH(EnumFacing.UP, EnumFacing.SOUTH),
+	CEILING_EAST(EnumFacing.UP, EnumFacing.EAST),     CEILING_WEST(EnumFacing.UP, EnumFacing.WEST),
 	
-	FLOOR_NORTH(EnumFacing.DOWN),    FLOOR_SOUTH(EnumFacing.DOWN),
-	FLOOR_EAST(EnumFacing.DOWN),     FLOOR_WEST(EnumFacing.DOWN);
+	FLOOR_NORTH(EnumFacing.DOWN, EnumFacing.NORTH),   FLOOR_SOUTH(EnumFacing.DOWN, EnumFacing.SOUTH),
+	FLOOR_EAST(EnumFacing.DOWN, EnumFacing.EAST),     FLOOR_WEST(EnumFacing.DOWN, EnumFacing.WEST);
 	
-	public EnumFacing facing;
-	EnumWorseBarrelOrientation(EnumFacing facing) {
+	EnumWorseBarrelOrientation(EnumFacing facing, EnumFacing secondaryFacing) {
 		this.facing = facing;
+		this.secondaryFacing = secondaryFacing;
 	}
+	
+	public final EnumFacing facing;
+	public final EnumFacing secondaryFacing; //TODO Name this better, I'm tired.
 	
 	//Blehhhhhhhhh
 	EnumWorseBarrelOrientation rotateUp() {
