@@ -73,7 +73,7 @@ public class BlockWorseBarrel extends Block {
 	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
 		if(world.isRemote) {
 			//This is slightly janky, but works well enough unless the barrel is only slightly within view.
-			RayTraceResult res = world.rayTraceBlocks(player.getPositionVector(), new Vec3d(pos).add(.5, .5, .5));
+			RayTraceResult res = world.rayTraceBlocks(player.getPositionVector().add(0, player.getEyeHeight(), 0), new Vec3d(pos).add(.5, .5, .5), false, true, false);
 			if(res != null && res.sideHit != null) {
 				IBlockState barrelState = world.getBlockState(pos);
 				if(barrelState.getValue(ORIENTATION).facing != res.sideHit) return;

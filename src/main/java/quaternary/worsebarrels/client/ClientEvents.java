@@ -33,34 +33,4 @@ public class ClientEvents {
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileWorseBarrel.class, new RenderTileWorseBarrel());
 	}
-	
-	@SubscribeEvent
-	public static void rightClick(PlayerInteractEvent.RightClickBlock e) {
-		if(e.getHand() != EnumHand.MAIN_HAND) return; //TODO proper offhand support
-		
-		World world = e.getWorld();
-		BlockPos clickedPos = e.getPos();
-		
-		if(world.getTileEntity(clickedPos) instanceof TileWorseBarrel) {
-			EnumFacing barrelFacing = world.getBlockState(clickedPos).getValue(BlockWorseBarrel.ORIENTATION).facing;
-			EnumFacing clickedFace = e.getFace();
-			
-			if(barrelFacing == clickedFace) {
-				if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-					IMessage message;
-					
-					if(e.getEntityPlayer().isSneaking()) {
-						message = WorseBarrelsConfig.SNEAK_RIGHT_CLICK_ACTION.getPacket().apply(e.getPos());
-					} else {
-						message = WorseBarrelsConfig.RIGHT_CLICK_ACTION.getPacket().apply(e.getPos());
-					}
-					
-					WorseBarrelsPacketHandler.sendToServer(message);
-				}
-				
-				e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
-				e.setUseItem(Event.Result.DENY);
-			}
-		}
-	}
 }
