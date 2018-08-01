@@ -1,0 +1,27 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"group": "worsebarrels:barrel",
+	"pattern": [
+		"WSW",
+		"WCW",
+		"WSW"
+	],
+	"key": {
+		"W": {
+			"item": "minecraft:planks",
+			"data": 0
+		},
+		"S": {
+			"item": "minecraft:wooden_slab",
+			"data": 0
+		},
+		"C": {
+			"type": "forge:ore_dict",
+			"ore": "chestWood"
+		}
+	},
+	"result": {
+		"item": "worsebarrels:barrel_oak",
+		"count": 4
+	}
+}
