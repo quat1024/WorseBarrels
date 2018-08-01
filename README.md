@@ -19,11 +19,8 @@ Completed features:
 * Read the contents of the barrel with a comparator.
 * Break or crush the barrel to keep its contents, like a shulker box.
 * Dispense the barrel to place it, also like a shulker box.
-
-Planned features:
 * Render the item on the front of the barrel. Yknow, so you can actually see what's inside...
 * Interact with the barrels to insert and remove items. *Kind of* important.
-* More types of barrels!
 
 ---
 

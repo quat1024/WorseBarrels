@@ -52,8 +52,8 @@ public class TileWorseBarrel extends TileEntity {
 	
 	@Override
 	public void readFromNBT(NBTTagCompound cmp) {
-		readItemsOnlyFromNBT(cmp);
 		super.readFromNBT(cmp);
+		readItemsOnlyFromNBT(cmp);
 	}
 	
 	public void readItemsOnlyFromNBT(NBTTagCompound cmp) {
@@ -61,17 +61,29 @@ public class TileWorseBarrel extends TileEntity {
 	}
 	
 	@Override
+	public void onLoad() {
+		markDirty();
+	}
+	
+	@Override
 	public void markDirty() {
 		super.markDirty();
 		
-		IBlockState barrelState = world.getBlockState(pos);
-		world.notifyBlockUpdate(pos, barrelState, barrelState, 2);
+		if(world != null && !world.isRemote) {
+			IBlockState barrelState = world.getBlockState(pos);
+			world.notifyBlockUpdate(pos, barrelState, barrelState, 2);
+		}
 	}
 	
 	@Nullable
 	@Override
 	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(pos, 69, writeToNBT(new NBTTagCompound()));
+		return new SPacketUpdateTileEntity(pos, 69, getUpdateTag());
+	}
+	
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
 	}
 	
 	@Override

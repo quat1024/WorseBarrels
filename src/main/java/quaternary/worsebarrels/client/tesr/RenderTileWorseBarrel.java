@@ -53,7 +53,9 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 			GlStateManager.enableRescaleNormal();
 			GlStateManager.popAttrib();
 			
-			ri.renderItem(first, ItemCameraTransforms.TransformType.GUI);
+			try {
+				ri.renderItem(first, ItemCameraTransforms.TransformType.GUI);
+			} catch (Exception oof) {}
 			
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.enableLighting();
