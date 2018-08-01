@@ -33,6 +33,15 @@ public class Util {
 		return ItemStack.EMPTY;
 	}
 	
+	public static int countItemsInHandler(IItemHandler handler) {
+		int runningTotal = 0;
+		for(int i = 0; i < handler.getSlots(); i++) {
+			ItemStack stack = handler.getStackInSlot(i);
+			if(!stack.isEmpty()) runningTotal += stack.getCount();
+		}
+		return runningTotal;
+	}
+	
 	public static ItemStack extractItem(IItemHandler handler, int count, boolean fake) {
 		ItemStack runningStack = ItemStack.EMPTY;
 		

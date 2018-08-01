@@ -6,8 +6,11 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -43,9 +46,11 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 				GlStateManager.rotate(barrelFacing == EnumFacing.UP ? 90 : -90, 0, 0, 1);
 			}
 			
+			GlStateManager.pushMatrix();
+			
 			GlStateManager.translate(6 / 16d + .001, 0, 0); //<-- additional .001 to avoid Z fighting
 			GlStateManager.rotate(90, 0, 1, 0);
-			GlStateManager.scale(.6, .6, .001); //<-- Flatten the item out
+			GlStateManager.scale(.75, .75, .001); //<-- Flatten the item out
 			
 			RenderHelper.enableStandardItemLighting();
 			
@@ -66,7 +71,37 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 			} catch (Exception oof) {}
 			
 			RenderHelper.disableStandardItemLighting();
-			GlStateManager.enableLighting();
+			
+			
+			GlStateManager.popMatrix();
+			
+			RayTraceResult res = mc.getRenderViewEntity().rayTrace(7, 0);
+			if(res != null && res.getBlockPos().equals(te.getPos())) {
+				String txt;
+				int itemCount = Util.countItemsInHandler(handler);
+				if(mc.player.isSneaking()) {
+					int maxStackSize = first.getMaxStackSize();
+					int stacks = itemCount / maxStackSize;
+					int leftover = itemCount % maxStackSize;
+					txt = String.format("%sx%s + %s", stacks, maxStackSize, leftover);
+				} else {
+					txt = String.valueOf(itemCount);
+				}
+				
+				GlStateManager.color(1, 1, 1, 1);
+				GlStateManager.translate(6 / 16d + .005, 0, 0);
+				GlStateManager.scale(-0.025F, -0.025F, 0.025F);
+				if(mc.player.isSneaking()) {
+					GlStateManager.scale(.4, .4, .4);
+				}
+				GlStateManager.translate(0, -4, 0);
+				GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
+				GlStateManager.rotate(90, 0, 1, 0);
+				
+				GlStateManager.disableLighting();
+				mc.fontRenderer.drawString(txt, -mc.fontRenderer.getStringWidth(txt) / 2, 0, 553648127);
+				GlStateManager.enableLighting();
+			}
 			
 			GlStateManager.popMatrix();
 		}
