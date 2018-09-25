@@ -28,20 +28,7 @@ public class CommonEvents {
 			EnumFacing clickedFace = e.getFace();
 			
 			if(barrelFacing == clickedFace) {
-				if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-					IMessage message;
-					
-					if(e.getEntityPlayer().isSneaking()) {
-						message = WorseBarrelsConfig.SNEAK_RIGHT_CLICK_ACTION.getPacket().apply(e.getPos());
-					} else {
-						message = WorseBarrelsConfig.RIGHT_CLICK_ACTION.getPacket().apply(e.getPos());
-					}
-					
-					WorseBarrelsPacketHandler.sendToServer(message);
-				}
-				
-				e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
-				e.setUseItem(Event.Result.DENY);
+				WorseBarrels.PROXY.handleRightClickBarrel(e);
 			}
 		}
 	}

@@ -1,6 +1,8 @@
 package quaternary.worsebarrels;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.*;
 
 public class Util {
@@ -67,5 +69,11 @@ public class Util {
 	//Range remap function. Useful!
 	public static float map(float value, float low1, float high1, float low2, float high2) {
 		return low2 + (value - low1) * ((high2 - low2) / (high1 - low1));
+	}
+	
+	//small abbreviation for a common idiom
+	public static void naughtyPlayer(MessageContext ctx, String badbad) {
+		WorseBarrels.LOGGER.warn("Disconnecting player " + ctx.getServerHandler().player.getName() + " since they are naughty! Reason: " + badbad);
+		ctx.getServerHandler().disconnect(new TextComponentString(badbad));
 	}
 }

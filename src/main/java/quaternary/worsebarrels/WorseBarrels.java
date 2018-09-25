@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -17,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import quaternary.worsebarrels.block.WorseBarrelsBlocks;
 import quaternary.worsebarrels.item.WorseBarrelsItems;
 import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
+import quaternary.worsebarrels.proxy.ServerProxy;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 @Mod(modid = WorseBarrels.MODID, name = WorseBarrels.NAME, version = WorseBarrels.VER, guiFactory = "quaternary.worsebarrels.etc.WorseBarrelsGuiFactory")
@@ -38,6 +40,9 @@ public class WorseBarrels {
 			return ICON;
 		}
 	};
+	
+	@SidedProxy(serverSide = "quaternary.worsebarrels.proxy.ServerProxy", clientSide = "quaternary.worsebarrels.proxy.ClientProxy")
+	public static ServerProxy PROXY;
 	
 	@Mod.EventHandler
 	public static void preinit(FMLPreInitializationEvent e) {

@@ -5,35 +5,36 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.*;
 import net.minecraftforge.items.*;
 import quaternary.worsebarrels.Util;
+import quaternary.worsebarrels.WorseBarrels;
+import quaternary.worsebarrels.etc.EnumItemCount;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 public class MessageInsertBarrelItem implements IMessage {
 	public MessageInsertBarrelItem() {}
 	
-	public MessageInsertBarrelItem(BlockPos barrelPos, boolean insertStack) {
+	public MessageInsertBarrelItem(BlockPos barrelPos, EnumItemCount insertionType) {
 		this.barrelPos = barrelPos;
-		this.insertStack = insertStack;
+		this.insertionType = insertionType;
 	}
 	
 	BlockPos barrelPos;
-	boolean insertStack;
+	EnumItemCount insertionType;
 	
 	@Override
 	public void toBytes(ByteBuf buf) {
 		ByteBufUtils2.writeBlockPos(buf, barrelPos);
-		buf.writeBoolean(insertStack);
+		ByteBufUtils2.writeEnum(buf, insertionType);
 	}
 	
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		barrelPos = ByteBufUtils2.readBlockPos(buf);
-		insertStack = buf.readBoolean();
+		insertionType = ByteBufUtils2.readEnum(buf, EnumItemCount.class);
 	}
 	
 	public static class Handler implements IMessageHandler<MessageInsertBarrelItem, IMessage> {
@@ -42,13 +43,22 @@ public class MessageInsertBarrelItem implements IMessage {
 			EntityPlayerMP inserter = ctx.getServerHandler().player;
 			WorldServer ws = inserter.getServerWorld();
 			ws.addScheduledTask(() -> {
+				if(message.insertionType == null) {
+					Util.naughtyPlayer(ctx, "Tried to insert with invalid type");
+					return;
+				}
+				
 				//No cheating!
-				if(!ws.isBlockLoaded(message.barrelPos)) return;
+				if(!ws.isBlockLoaded(message.barrelPos)) {
+					Util.naughtyPlayer(ctx, "Tried to insert to unloaded barrel");
+					return;
+				}
 				
 				IAttributeInstance reachAttr = inserter.getAttributeMap().getAttributeInstance(EntityPlayerMP.REACH_DISTANCE);
 				double reachDistanceSq = reachAttr.getAttributeValue() * reachAttr.getAttributeValue();
 				double barrelDistance = message.barrelPos.distanceSq(inserter.getPosition());
 				if(reachDistanceSq < barrelDistance + 1) {
+					WorseBarrels.LOGGER.info("Received out-of-range barrel insertion packet from " + ctx.getServerHandler().player.getName(), ", this could be evidence of some sort of cheat mod, a bug on my end... or just lag x)");
 					return; //Too far away to actually click the barrel...
 				}
 				
@@ -60,8 +70,16 @@ public class MessageInsertBarrelItem implements IMessage {
 				if(handler == null) return;
 				
 				//This feels sketch af
+				
+				if(message.insertionType == EnumItemCount.ALL) {
+					//TODO No-op for now while I figure this out :/
+					//This is tricky since I have to loop over the whole inventory + not dupe items all over the place
+					return;
+				}
+				
 				ItemStack toInsert = inserter.getHeldItemMainhand().copy();
-				if(!message.insertStack) {
+				//(this covers the STACK case)
+				if(message.insertionType == EnumItemCount.ONE) {
 					toInsert.setCount(1);
 				}
 				

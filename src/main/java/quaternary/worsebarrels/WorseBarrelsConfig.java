@@ -8,9 +8,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import quaternary.worsebarrels.etc.EnumItemCount;
 import quaternary.worsebarrels.net.MessageInsertBarrelItem;
 import quaternary.worsebarrels.net.MessageRequestBarrelItem;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -23,9 +25,11 @@ public class WorseBarrelsConfig {
 	
 	public static EnumBarrelAction LEFT_CLICK_ACTION;
 	public static EnumBarrelAction SNEAK_LEFT_CLICK_ACTION;
+	public static EnumBarrelAction CTRL_LEFT_CLICK_ACTION;
 	
 	public static EnumBarrelAction RIGHT_CLICK_ACTION;
 	public static EnumBarrelAction SNEAK_RIGHT_CLICK_ACTION;
+	public static EnumBarrelAction CTRL_RIGHT_CLICK_ACTION;
 	
 	public static Configuration config;
 	
@@ -59,8 +63,11 @@ public class WorseBarrelsConfig {
 		
 		LEFT_CLICK_ACTION = getEnum(config, "leftClickAction", "controls", EnumBarrelAction.INSERT_ONE, "What happens when you left click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
 		SNEAK_LEFT_CLICK_ACTION = getEnum(config, "sneakLeftClickAction", "controls", EnumBarrelAction.INSERT_STACK, "What happens when you left click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		CTRL_LEFT_CLICK_ACTION = getEnum(config, "ctrlLeftClickAction", "controls", EnumBarrelAction.NOTHING, "What happens when you left click on a barrel's face while holding Control?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		
 		RIGHT_CLICK_ACTION = getEnum(config, "rightClickAction", "controls", EnumBarrelAction.REQUEST_ONE, "What happens when you right click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
 		SNEAK_RIGHT_CLICK_ACTION = getEnum(config, "sneakRightClickAction", "controls", EnumBarrelAction.REQUEST_STACK, "What happens when you right click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		CTRL_RIGHT_CLICK_ACTION = getEnum(config, "ctrlRightClickAction", "controls", EnumBarrelAction.NOTHING, "What happens when you right click on a barrel's face while holding Control?", EnumBarrelAction::describe, EnumBarrelAction.class);
 		
 		if(config.hasChanged()) config.save();
 	}
@@ -106,8 +113,10 @@ public class WorseBarrelsConfig {
 	public enum EnumBarrelAction {
 		REQUEST_ONE,
 		REQUEST_STACK,
+		REQUEST_ALL,
 		INSERT_ONE,
-		INSERT_STACK;
+		INSERT_STACK,
+		NOTHING;
 		
 		@Override
 		public String toString() {
@@ -118,18 +127,23 @@ public class WorseBarrelsConfig {
 			switch(this) {
 				case REQUEST_ONE: return "Request one item from the barrel.";
 				case REQUEST_STACK: return "Request a stack of items from the barrel.";
+				case REQUEST_ALL: return "Request all of the items from the barrel.";
 				case INSERT_ONE: return "Insert one item from your hand into the barrel.";
 				case INSERT_STACK: return "Insert a whole stack of items from your hand into the barrel.";
-				default: return "asjdlasjldsjldjlkasdjlksd";
+				case NOTHING: return "Does nothing.";
+				default: return "Impossible";
 			}
 		}
 		
-		public Function<BlockPos, IMessage> getPacket() {
+		@Nullable
+		public IMessage getPacket(BlockPos pos) {
 			switch(this) {
-				case REQUEST_ONE: return (pos) -> new MessageRequestBarrelItem(pos, false);
-				case REQUEST_STACK: return (pos) -> new MessageRequestBarrelItem(pos, true);
-				case INSERT_ONE: return (pos) -> new MessageInsertBarrelItem(pos, false);
-				case INSERT_STACK: return (pos) -> new MessageInsertBarrelItem(pos, true);
+				case REQUEST_ONE: return new MessageRequestBarrelItem(pos, EnumItemCount.ONE);
+				case REQUEST_STACK: return new MessageRequestBarrelItem(pos, EnumItemCount.STACK);
+				case REQUEST_ALL: return new MessageRequestBarrelItem(pos, EnumItemCount.ALL);
+				case INSERT_ONE: return new MessageInsertBarrelItem(pos, EnumItemCount.ONE);
+				case INSERT_STACK: return new MessageInsertBarrelItem(pos, EnumItemCount.STACK);
+				case NOTHING: return null;
 				default: return null;
 			}
 		}

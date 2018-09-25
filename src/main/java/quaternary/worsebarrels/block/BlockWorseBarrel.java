@@ -22,6 +22,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import quaternary.worsebarrels.WorseBarrels;
 import quaternary.worsebarrels.WorseBarrelsConfig;
 import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
 import quaternary.worsebarrels.etc.BarrelItemHandler;
@@ -71,22 +72,13 @@ public class BlockWorseBarrel extends Block {
 	
 	@Override
 	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
-		if(world.isRemote) {
-			//This is slightly janky, but works well enough unless the barrel is only slightly within view.
-			RayTraceResult res = world.rayTraceBlocks(player.getPositionVector().add(0, player.getEyeHeight(), 0), new Vec3d(pos).add(.5, .5, .5), false, true, false);
-			if(res != null && res.sideHit != null) {
-				IBlockState barrelState = world.getBlockState(pos);
-				if(barrelState.getValue(ORIENTATION).facing != res.sideHit) return;
-				
-				IMessage message;
-				if(player.isSneaking()) {
-					message = WorseBarrelsConfig.SNEAK_LEFT_CLICK_ACTION.getPacket().apply(pos);
-				} else {
-					message = WorseBarrelsConfig.LEFT_CLICK_ACTION.getPacket().apply(pos);
-				}
-				
-				WorseBarrelsPacketHandler.sendToServer(message);
-			}
+		//This is slightly janky, but works well enough unless the barrel is only slightly within view.
+		RayTraceResult res = world.rayTraceBlocks(player.getPositionVector().add(0, player.getEyeHeight(), 0), new Vec3d(pos).add(.5, .5, .5), false, true, false);
+		if(res != null && res.sideHit != null) {
+			IBlockState barrelState = world.getBlockState(pos);
+			if(barrelState.getValue(ORIENTATION).facing != res.sideHit) return;
+			
+			WorseBarrels.PROXY.handleLeftClickBarrel(world, pos, player);
 		}
 	}
 	
