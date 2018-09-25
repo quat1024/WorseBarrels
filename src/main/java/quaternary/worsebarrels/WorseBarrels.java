@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -48,7 +49,7 @@ public class WorseBarrels {
 	public static void blocks(RegistryEvent.Register<Block> e) {
 		WorseBarrelsBlocks.registerBlocks(e.getRegistry());
 		
-		GameRegistry.registerTileEntity(TileWorseBarrel.class, MODID + ":barrel");
+		GameRegistry.registerTileEntity(TileWorseBarrel.class, new ResourceLocation(MODID, "barrel"));
 	}
 	
 	@SubscribeEvent
