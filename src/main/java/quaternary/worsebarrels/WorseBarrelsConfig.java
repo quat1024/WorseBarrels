@@ -1,5 +1,7 @@
 package quaternary.worsebarrels;
 
+import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -8,6 +10,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import quaternary.worsebarrels.etc.EnumItemCount;
 import quaternary.worsebarrels.net.MessageInsertBarrelItem;
 import quaternary.worsebarrels.net.MessageRequestBarrelItem;
@@ -16,12 +19,17 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber
 public class WorseBarrelsConfig {
 	public static int MAX_NESTING_DEPTH;
 	public static int EMPTY_STACK_SIZE;
 	public static int FILLED_STACK_SIZE;
+	
+	public static boolean ALLOW_DISPENSE;
+	
+	public static Set<Item> ITEM_BLACKLIST;
 	
 	public static EnumBarrelAction LEFT_CLICK_ACTION;
 	public static EnumBarrelAction SNEAK_LEFT_CLICK_ACTION;
@@ -37,18 +45,18 @@ public class WorseBarrelsConfig {
 		config = new Configuration(e.getSuggestedConfigurationFile(), "1");
 		config.load();
 		
-		readConfig();
+		readConfigPreinit();
 	}
 	
-	private static void readConfig() {
+	private static void readConfigPreinit() {
 		config.setCategoryComment("balance", "Balancing features!");
 		
 		MAX_NESTING_DEPTH = config.getInt("maxNestingDepth", "balance", 2, 0, 8, "How many layers of nested barrels-inside-barrels are allowed? Set to 0 to disable nesting.");
+		ALLOW_DISPENSE = config.get("balance", "allowDispense", true, "Can you dispense a barrel to place it?").setRequiresMcRestart(true).getBoolean();
 		
 		boolean bigboisOk = Loader.isModLoaded("stackup");
 		
 		EMPTY_STACK_SIZE = config.getInt("emptyStackSize", "balance", 64, 1, Integer.MAX_VALUE, "How many empty barrels fit in a single stack?");
-		
 		FILLED_STACK_SIZE = config.getInt("filledStackSize", "balance", 8, 1, Integer.MAX_VALUE, "How many non-empty barrels fit in a single stack?");
 		
 		if(!bigboisOk && (EMPTY_STACK_SIZE > 64 || FILLED_STACK_SIZE > 64)) {
@@ -68,6 +76,25 @@ public class WorseBarrelsConfig {
 		RIGHT_CLICK_ACTION = getEnum(config, "rightClickAction", "controls", EnumBarrelAction.REQUEST_ONE, "What happens when you right click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
 		SNEAK_RIGHT_CLICK_ACTION = getEnum(config, "sneakRightClickAction", "controls", EnumBarrelAction.REQUEST_STACK, "What happens when you right click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
 		CTRL_RIGHT_CLICK_ACTION = getEnum(config, "ctrlRightClickAction", "controls", EnumBarrelAction.NOTHING, "What happens when you right click on a barrel's face while holding Control?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		
+		//don't save the config yet because readConfigInit will be called soon
+	}
+	
+	//Depends on what items are registered, so has to come later.
+	public static void readConfigInit() {
+		ITEM_BLACKLIST = Arrays.stream(
+			config.getStringList("itemBlacklist", "balance", new String[0], "Item IDs that are not allowed to go in barrels. One per line, please, of the form 'modid:name'")
+		)
+			.map(ResourceLocation::new)
+			.flatMap(res -> {
+				if(ForgeRegistries.ITEMS.containsKey(res)) return Stream.of(res);
+				else {
+					WorseBarrels.LOGGER.warn("Can't find any item named " + res);
+					return Stream.empty();
+				}
+			})
+			.map(ForgeRegistries.ITEMS::getValue)
+			.collect(Collectors.toSet());
 		
 		if(config.hasChanged()) config.save();
 	}
@@ -106,7 +133,8 @@ public class WorseBarrelsConfig {
 	@SubscribeEvent
 	public static void configChanged(ConfigChangedEvent.OnConfigChangedEvent e) {
 		if(e.getModID().equals(WorseBarrels.MODID)) {
-			readConfig();
+			readConfigPreinit();
+			readConfigInit();
 		}
 	}
 	

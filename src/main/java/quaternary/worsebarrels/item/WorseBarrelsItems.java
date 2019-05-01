@@ -5,6 +5,7 @@ import net.minecraft.block.BlockDispenser;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.registries.IForgeRegistry;
+import quaternary.worsebarrels.WorseBarrelsConfig;
 import quaternary.worsebarrels.block.WorseBarrelsBlocks;
 import quaternary.worsebarrels.etc.BarrelDispenserBehavior;
 
@@ -19,10 +20,7 @@ public final class WorseBarrelsItems {
 	public static void registerItems(IForgeRegistry<Item> reg) {
 		WOOD_BARREL_ITEMS = ImmutableList.copyOf(WorseBarrelsBlocks.WOOD_BARRELS.stream().map(b -> createItemBlock(new ItemBlockWorseBarrel(b))).collect(Collectors.toList()));
 		
-		WOOD_BARREL_ITEMS.forEach(i -> {
-			reg.register(i);
-			BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(i, new BarrelDispenserBehavior());
-		});
+		WOOD_BARREL_ITEMS.forEach(reg::register);
 	}
 	
 	private static <T extends ItemBlock> T createItemBlock(T itemBlock) {

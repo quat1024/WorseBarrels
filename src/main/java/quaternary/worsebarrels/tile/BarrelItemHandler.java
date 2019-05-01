@@ -30,6 +30,7 @@ public class BarrelItemHandler extends ItemStackHandler {
 	@Override
 	public ItemStack insertItem(int slot, @Nonnull ItemStack insertionStack, boolean simulate) {
 		if(insertionStack.isEmpty()) return ItemStack.EMPTY;
+		if(WorseBarrelsConfig.ITEM_BLACKLIST.contains(insertionStack.getItem())) return insertionStack; //no u
 		
 		ItemStack firstStack = getFirstNonemptyStack();
 		
