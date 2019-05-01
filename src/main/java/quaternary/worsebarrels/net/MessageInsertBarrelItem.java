@@ -15,6 +15,7 @@ import quaternary.worsebarrels.etc.EnumItemCount;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 public class MessageInsertBarrelItem implements IMessage {
+	@SuppressWarnings("unused")
 	public MessageInsertBarrelItem() {}
 	
 	public MessageInsertBarrelItem(BlockPos barrelPos, EnumItemCount insertionType) {
@@ -22,8 +23,8 @@ public class MessageInsertBarrelItem implements IMessage {
 		this.insertionType = insertionType;
 	}
 	
-	BlockPos barrelPos;
-	EnumItemCount insertionType;
+	private BlockPos barrelPos;
+	private EnumItemCount insertionType;
 	
 	@Override
 	public void toBytes(ByteBuf buf) {

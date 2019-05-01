@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+@SuppressWarnings("unused")
 public class ServerProxy {
 	public void handleRightClickBarrel(PlayerInteractEvent.RightClickBlock e) {
 		e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);

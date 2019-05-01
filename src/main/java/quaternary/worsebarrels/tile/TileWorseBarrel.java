@@ -9,27 +9,20 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import quaternary.worsebarrels.Util;
 import quaternary.worsebarrels.block.BlockWorseBarrel;
-import quaternary.worsebarrels.etc.BarrelItemHandler;
 
 import javax.annotation.Nullable;
 
 public class TileWorseBarrel extends TileEntity {
-	//Mfw
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-		return oldState.getBlock() != newState.getBlock();
-	}
-	
-	BarrelItemHandler handler;
-	
 	public TileWorseBarrel() {
-		handler = new BarrelTileItemHandler(this);
+		handler = new BarrelItemHandler(this);
 	}
+	
+	private final BarrelItemHandler handler;
 	
 	public int getComparatorOverride() {
 		return ItemHandlerHelper.calcRedstoneFromInventory(handler);
@@ -91,8 +84,13 @@ public class TileWorseBarrel extends TileEntity {
 		readFromNBT(pkt.getNbtCompound());
 	}
 	
-	@CapabilityInject(IItemHandler.class)
-	public static Capability<IItemHandler> ITEM_HANDLER = null;
+	//Mfw
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+		return oldState.getBlock() != newState.getBlock();
+	}
+	
+	private static final Capability<IItemHandler> ITEM_HANDLER = CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 	
 	@Override
 	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
@@ -104,6 +102,7 @@ public class TileWorseBarrel extends TileEntity {
 	
 	@Nullable
 	@Override
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
 		IBlockState barrelState = world.getBlockState(pos);
 		if(capability == ITEM_HANDLER && facing != barrelState.getValue(BlockWorseBarrel.ORIENTATION).facing) {

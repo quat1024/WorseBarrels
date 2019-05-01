@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import quaternary.worsebarrels.WorseBarrelsConfig;
 import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
 
+@SuppressWarnings("unused")
 public class ClientProxy extends ServerProxy {
 	@Override
 	public void handleRightClickBarrel(PlayerInteractEvent.RightClickBlock e) {

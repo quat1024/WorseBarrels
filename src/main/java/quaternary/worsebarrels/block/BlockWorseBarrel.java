@@ -19,13 +19,10 @@ import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import quaternary.worsebarrels.WorseBarrels;
-import quaternary.worsebarrels.WorseBarrelsConfig;
-import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
-import quaternary.worsebarrels.etc.BarrelItemHandler;
+import quaternary.worsebarrels.tile.BarrelItemHandler;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 import javax.annotation.Nullable;

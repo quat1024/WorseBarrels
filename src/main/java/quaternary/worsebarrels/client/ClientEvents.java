@@ -22,12 +22,14 @@ import quaternary.worsebarrels.item.WorseBarrelsItems;
 import quaternary.worsebarrels.net.*;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
+import java.util.Objects;
+
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = WorseBarrels.MODID)
 public class ClientEvents {
 	@SubscribeEvent
 	public static void models(ModelRegistryEvent e) {
 		WorseBarrelsItems.WOOD_BARREL_ITEMS.forEach(i -> {
-			ModelResourceLocation mrl = new ModelResourceLocation(i.getRegistryName(), "inventory");
+			ModelResourceLocation mrl = new ModelResourceLocation(Objects.requireNonNull(i.getRegistryName()), "inventory");
 			ModelLoader.setCustomModelResourceLocation(i, 0, mrl);
 		});
 		

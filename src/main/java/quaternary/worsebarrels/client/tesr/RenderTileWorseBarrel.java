@@ -60,9 +60,9 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 			int lv = ambLight / 65536;
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lu / 1f, lv / 1f);
 			
-			GlStateManager.enableRescaleNormal(); //This hack Storage Drawers uses is crazy!!!
-			GlStateManager.disableRescaleNormal();//I guess the purpose is to make the lighting
-			GlStateManager.pushAttrib();          //still work when the item is flattened
+			GlStateManager.enableRescaleNormal();  //This hack Storage Drawers uses is crazy!!!
+			GlStateManager.disableRescaleNormal(); //I guess the purpose is to make the lighting
+			GlStateManager.pushAttrib();           //still work when the item is flattened
 			GlStateManager.enableRescaleNormal();
 			GlStateManager.popAttrib();
 			
@@ -71,7 +71,6 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 			} catch (Exception oof) {}
 			
 			RenderHelper.disableStandardItemLighting();
-			
 			
 			GlStateManager.popMatrix();
 			

@@ -17,6 +17,7 @@ import quaternary.worsebarrels.etc.EnumItemCount;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 public class MessageRequestBarrelItem implements IMessage {
+	@SuppressWarnings("unused")
 	public MessageRequestBarrelItem() {}
 	
 	public MessageRequestBarrelItem(BlockPos barrelPos, EnumItemCount requestType) {
@@ -24,8 +25,8 @@ public class MessageRequestBarrelItem implements IMessage {
 		this.requestType = requestType;
 	}
 	
-	BlockPos barrelPos;
-	EnumItemCount requestType;
+	private BlockPos barrelPos;
+	private EnumItemCount requestType;
 	
 	@Override
 	public void toBytes(ByteBuf buf) {

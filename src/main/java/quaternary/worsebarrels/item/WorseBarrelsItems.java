@@ -8,6 +8,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import quaternary.worsebarrels.block.WorseBarrelsBlocks;
 import quaternary.worsebarrels.etc.BarrelDispenserBehavior;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class WorseBarrelsItems {
@@ -25,7 +26,7 @@ public final class WorseBarrelsItems {
 	}
 	
 	private static <T extends ItemBlock> T createItemBlock(T itemBlock) {
-		itemBlock.setRegistryName(itemBlock.getBlock().getRegistryName());
+		itemBlock.setRegistryName(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()));
 		itemBlock.setCreativeTab(itemBlock.getBlock().getCreativeTab());
 		
 		return itemBlock;

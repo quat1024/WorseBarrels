@@ -1,4 +1,4 @@
-package quaternary.worsebarrels.etc;
+package quaternary.worsebarrels.tile;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -14,13 +14,17 @@ import quaternary.worsebarrels.tile.TileWorseBarrel;
 import javax.annotation.Nonnull;
 
 public class BarrelItemHandler extends ItemStackHandler {
+	public BarrelItemHandler(TileWorseBarrel tile) {
+		super(STACK_COUNT);
+		this.tile = tile;
+	}
+	
+	private final TileWorseBarrel tile;
+	
 	public static final int STACK_COUNT = 8;
+	
 	public static final String STACK_KEY = "BarrelItem";
 	public static final String COUNT_KEY = "BarrelCount";
-	
-	public BarrelItemHandler() {
-		super(STACK_COUNT);
-	}
 	
 	@Nonnull
 	@Override
@@ -35,6 +39,11 @@ public class BarrelItemHandler extends ItemStackHandler {
 		if(ok) {
 			return super.insertItem(slot, insertionStack, simulate);
 		} else return insertionStack;
+	}
+	
+	@Override
+	protected void onContentsChanged(int slot) {
+		tile.markDirty();
 	}
 	
 	private int getNestedBarrelDepth(ItemStack stack_) {

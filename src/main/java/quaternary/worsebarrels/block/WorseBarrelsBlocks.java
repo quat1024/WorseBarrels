@@ -10,7 +10,7 @@ import quaternary.worsebarrels.WorseBarrels;
 public final class WorseBarrelsBlocks {
 	private WorseBarrelsBlocks() {}
 	
-	public static ImmutableList<String> woodVariants = ImmutableList.of("oak", "spruce", "jungle", "acacia", "birch", "darkoak");
+	public static final ImmutableList<String> woodVariants = ImmutableList.of("oak", "spruce", "jungle", "acacia", "birch", "darkoak");
 	
 	public static ImmutableList<BlockWorseBarrel> WOOD_BARRELS = null;
 	
