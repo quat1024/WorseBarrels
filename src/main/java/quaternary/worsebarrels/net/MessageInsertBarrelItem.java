@@ -6,11 +6,15 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.*;
 import net.minecraftforge.items.*;
 import quaternary.worsebarrels.Util;
 import quaternary.worsebarrels.WorseBarrels;
+import quaternary.worsebarrels.WorseBarrelsConfig;
 import quaternary.worsebarrels.etc.EnumItemCount;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
@@ -82,6 +86,11 @@ public class MessageInsertBarrelItem implements IMessage {
 				//(this covers the STACK case)
 				if(message.insertionType == EnumItemCount.ONE) {
 					toInsert.setCount(1);
+				}
+				
+				if(WorseBarrelsConfig.ITEM_BLACKLIST.contains(toInsert.getItem())) {
+					inserter.sendStatusMessage(new TextComponentTranslation("worsebarrels.cantInsertThis", toInsert.getDisplayName()).setStyle(new Style().setColor(TextFormatting.RED)), true);
+					return;
 				}
 				
 				int startingCount = toInsert.getCount();

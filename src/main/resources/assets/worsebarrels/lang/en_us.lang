@@ -6,3 +6,5 @@ tile.worsebarrels.barrel_jungle.name=Worse Jungle Barrel
 tile.worsebarrels.barrel_acacia.name=Worse Acacia Barrel
 tile.worsebarrels.barrel_birch.name=Worse Birch Barrel
 tile.worsebarrels.barrel_darkoak.name=Worse Dark Oak Barrel
+
+worsebarrels.cantInsertThis=The %s isn't allowed in the barrel!
