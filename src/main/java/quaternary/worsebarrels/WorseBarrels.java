@@ -29,7 +29,7 @@ import quaternary.worsebarrels.tile.TileWorseBarrel;
 public class WorseBarrels {
 	public static final String MODID = "worsebarrels";
 	public static final String NAME = "Worse Barrels";
-	public static final String VER = "1.0.0";
+	public static final String VER = "1.1.0";
 	
 	public static final Logger LOGGER = LogManager.getLogger(NAME);
 	
