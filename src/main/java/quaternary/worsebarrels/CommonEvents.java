@@ -7,7 +7,9 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import quaternary.worsebarrels.block.BlockWorseBarrel;
 
@@ -28,6 +30,24 @@ public class CommonEvents {
 		
 		if(state.getValue(BlockWorseBarrel.ORIENTATION).facing == hit.sideHit) {
 			e.setNewSpeed(0);
+		}
+	}
+	
+	@SubscribeEvent
+	public static void useBlock(PlayerInteractEvent.RightClickBlock e) {
+		//Goal: call onBlockActivated on the barrel, even if the player is sneaking.
+		EntityPlayer player = e.getEntityPlayer();
+		if(player == null || !player.isSneaking()) return;
+		
+		World world = e.getWorld();
+		if(world == null) return;
+		
+		BlockPos pos = e.getPos();
+		IBlockState state = world.getBlockState(pos);
+		if(!(state.getBlock() instanceof BlockWorseBarrel)) return;
+		
+		if(state.getValue(BlockWorseBarrel.ORIENTATION).facing == e.getFace()) {
+			e.setUseBlock(Event.Result.ALLOW);
 		}
 	}
 }
