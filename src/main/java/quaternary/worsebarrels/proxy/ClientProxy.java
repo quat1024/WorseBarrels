@@ -1,6 +1,5 @@
 package quaternary.worsebarrels.proxy;
 
-import com.sun.org.apache.xpath.internal.operations.And;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
