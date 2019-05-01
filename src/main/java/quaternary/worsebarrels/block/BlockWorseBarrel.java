@@ -6,6 +6,7 @@ import net.minecraft.block.material.*;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.*;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -69,14 +71,43 @@ public class BlockWorseBarrel extends Block {
 	
 	@Override
 	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
-		//This is slightly janky, but works well enough unless the barrel is only slightly within view.
 		RayTraceResult res = world.rayTraceBlocks(player.getPositionVector().add(0, player.getEyeHeight(), 0), new Vec3d(pos).add(.5, .5, .5), false, true, false);
 		if(res != null && res.sideHit != null) {
 			IBlockState barrelState = world.getBlockState(pos);
-			if(barrelState.getValue(ORIENTATION).facing != res.sideHit) return;
+			if(barrelState.getBlock() != this || barrelState.getValue(ORIENTATION).facing != res.sideHit) return;
 			
 			WorseBarrels.PROXY.handleLeftClickBarrel(world, pos, player);
 		}
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if(!(world.getTileEntity(pos) instanceof TileWorseBarrel)) {
+			player.sendStatusMessage(new TextComponentString("Missing TileEntity?!"), true);
+			return false;
+		}
+		
+		IBlockState barrelState = world.getBlockState(pos);
+		if(barrelState.getBlock() != this || barrelState.getValue(ORIENTATION).facing != facing) return false;
+		
+		if(world.isRemote) {
+			WorseBarrels.PROXY.handleRightClickBarrel(world, pos, player);
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+		if(player.isCreative()) {
+			RayTraceResult res = world.rayTraceBlocks(player.getPositionVector().add(0, player.getEyeHeight(), 0), new Vec3d(pos).add(.5, .5, .5), false, true, false);
+			if(res != null && res.sideHit != null && state.getValue(ORIENTATION).facing == res.sideHit) {
+				WorseBarrels.PROXY.handleLeftClickBarrel(world, pos, player);
+				return false;
+			}
+		}
+		
+		return super.removedByPlayer(state, world, pos, player, willHarvest);
 	}
 	
 	@Override

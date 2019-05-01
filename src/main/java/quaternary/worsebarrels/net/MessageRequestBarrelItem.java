@@ -89,7 +89,9 @@ public class MessageRequestBarrelItem implements IMessage {
 						extracted = null; //Impossible
 				}
 				
-				ItemHandlerHelper.giveItemToPlayer(requester, extracted, requester.inventory.currentItem);
+				if(!extracted.isEmpty()) {
+					ItemHandlerHelper.giveItemToPlayer(requester, extracted, requester.inventory.currentItem);
+				}
 			});
 			
 			return null;

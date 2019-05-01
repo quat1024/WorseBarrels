@@ -1,35 +1,33 @@
 package quaternary.worsebarrels;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import quaternary.worsebarrels.block.BlockWorseBarrel;
-import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
-import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 @Mod.EventBusSubscriber(modid = WorseBarrels.MODID)
 public class CommonEvents {
 	@SubscribeEvent
-	public static void rightClick(PlayerInteractEvent.RightClickBlock e) {
-		if(e.getHand() != EnumHand.MAIN_HAND) return; //TODO proper offhand support
+	public static void breakSpeed(PlayerEvent.BreakSpeed e) {
+		EntityPlayer player = e.getEntityPlayer();
+		BlockPos pos = e.getPos();
+		if(player == null || pos == null) return;
+		World world = player.world;
 		
-		World world = e.getWorld();
-		BlockPos clickedPos = e.getPos();
+		IBlockState state = e.getState();
+		if(!(state.getBlock() instanceof BlockWorseBarrel)) return;
 		
-		if(world.getTileEntity(clickedPos) instanceof TileWorseBarrel) {
-			EnumFacing barrelFacing = world.getBlockState(clickedPos).getValue(BlockWorseBarrel.ORIENTATION).facing;
-			EnumFacing clickedFace = e.getFace();
-			
-			if(barrelFacing == clickedFace) {
-				WorseBarrels.PROXY.handleRightClickBarrel(e);
-			}
+		RayTraceResult hit = world.rayTraceBlocks(player.getPositionVector().add(0, player.getEyeHeight(), 0), new Vec3d(pos).add(.5, .5, .5), false, true, false);
+		if(hit == null || hit.sideHit == null) return;
+		
+		if(state.getValue(BlockWorseBarrel.ORIENTATION).facing == hit.sideHit) {
+			e.setNewSpeed(0);
 		}
 	}
 }
