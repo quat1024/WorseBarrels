@@ -2,6 +2,7 @@ package quaternary.worsebarrels.client.tesr;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -10,6 +11,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -17,6 +19,7 @@ import net.minecraftforge.items.IItemHandler;
 import quaternary.worsebarrels.Util;
 import quaternary.worsebarrels.block.BlockWorseBarrel;
 import quaternary.worsebarrels.block.EnumWorseBarrelOrientation;
+import quaternary.worsebarrels.tile.BarrelItemHandler;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
 
 public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBarrel> {
@@ -74,11 +77,23 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 			
 			GlStateManager.popMatrix();
 			
+			boolean showText = false;
+			boolean showDetailedText = false;
+			
 			RayTraceResult res = mc.getRenderViewEntity().rayTrace(7, 0);
 			if(res != null && res.getBlockPos().equals(te.getPos())) {
+				showText = true;
+			}
+			
+			if(mc.player.isSneaking()) {
+				if(showText) showDetailedText = true;
+				if(mc.player.getPositionVector().squareDistanceTo(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ()) < 5 * 5) showText = true;
+			}
+			
+			if(showText) {
 				String txt;
 				int itemCount = Util.countItemsInHandler(handler);
-				if(mc.player.isSneaking()) {
+				if(showDetailedText) {
 					int maxStackSize = first.getMaxStackSize();
 					int stacks = itemCount / maxStackSize;
 					int leftover = itemCount % maxStackSize;
@@ -87,18 +102,32 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 					txt = String.valueOf(itemCount);
 				}
 				
+				boolean max = first.getMaxStackSize() * BarrelItemHandler.STACK_COUNT == itemCount;
+				int col = max ? 0xFF6600 : 0xFFFFFF;
+				float scale;
+				if(showDetailedText) scale = 1/70f;
+				else {
+					if(itemCount < 10) {
+						scale = 1/15f;
+					} else if(itemCount < 100) {
+						scale = 1/23f;
+					} else scale = 1/30f;
+				}
+				
 				GlStateManager.color(1, 1, 1, 1);
 				GlStateManager.translate(6 / 16d + .005, 0, 0);
-				GlStateManager.scale(-0.025F, -0.025F, 0.025F);
-				if(mc.player.isSneaking()) {
-					GlStateManager.scale(.4, .4, .4);
-				}
+				GlStateManager.scale(-1, -scale, scale);
 				GlStateManager.translate(0, -4, 0);
 				GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
 				GlStateManager.rotate(90, 0, 1, 0);
 				
 				GlStateManager.disableLighting();
-				mc.fontRenderer.drawString(txt, -mc.fontRenderer.getStringWidth(txt) / 2, 0, 553648127);
+				//Emulate drawStringWithShadow, since it z-fights when drawn with the depth buffer on
+				//and it's not appropriate in this case to disable depth
+				int xx = -mc.fontRenderer.getStringWidth(txt) / 2;
+				mc.fontRenderer.drawString(txt, xx + 1, 1, (col & 0xFCFCFC) >> 2);
+				GlStateManager.translate(0, 0, -0.001);
+				mc.fontRenderer.drawString(txt, xx, 0, col);
 				GlStateManager.enableLighting();
 			}
 			
