@@ -7,6 +7,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import quaternary.worsebarrels.Util;
+import quaternary.worsebarrels.WorseBarrels;
 import quaternary.worsebarrels.WorseBarrelsConfig;
 import quaternary.worsebarrels.block.BlockWorseBarrel;
 import quaternary.worsebarrels.tile.TileWorseBarrel;
@@ -48,6 +49,7 @@ public class BarrelItemHandler extends ItemStackHandler {
 	}
 	
 	private int getNestedBarrelDepth(ItemStack stack_) {
+		//please excuse the spaghetti
 		ItemStack stack = stack_;
 		int depth = 0;
 		
@@ -109,8 +111,17 @@ public class BarrelItemHandler extends ItemStackHandler {
 	public void readNBT(NBTTagCompound cmp) {
 		Util.clearHandler(this);
 		
-		ItemStack stack = new ItemStack(cmp.getCompoundTag(STACK_KEY));
-		stack.setCount(cmp.getInteger(COUNT_KEY));
-		ItemHandlerHelper.insertItem(this, stack, false);
+		int count = cmp.getInteger(COUNT_KEY);
+		
+		if(count != 0) {
+			ItemStack stack = new ItemStack(cmp.getCompoundTag(STACK_KEY));
+			stack.setCount(count);
+			ItemHandlerHelper.insertItem(this, stack, false);
+			
+			if(getItemCount() == 0) {
+				WorseBarrels.LOGGER.fatal("Tried to load a barrel that said it was non-empty, but no items were loaded??");
+				WorseBarrels.LOGGER.fatal("Tag: " + cmp.toString());
+			}
+		}
 	}
 }

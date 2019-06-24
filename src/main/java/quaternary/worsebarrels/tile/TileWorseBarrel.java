@@ -94,19 +94,27 @@ public class TileWorseBarrel extends TileEntity {
 	
 	@Override
 	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-		IBlockState barrelState = world.getBlockState(pos);
-		if(capability == ITEM_HANDLER && facing != barrelState.getValue(BlockWorseBarrel.ORIENTATION).facing) {
-			return true;
-		} else return super.hasCapability(capability, facing);
+		if(capability == ITEM_HANDLER) {
+			IBlockState state = world.getBlockState(pos);
+			if(state.getBlock() instanceof BlockWorseBarrel && facing != state.getValue(BlockWorseBarrel.ORIENTATION).facing) {
+				return true;
+			}
+		}
+		
+		return super.hasCapability(capability, facing);
 	}
 	
 	@Nullable
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-		IBlockState barrelState = world.getBlockState(pos);
-		if(capability == ITEM_HANDLER && facing != barrelState.getValue(BlockWorseBarrel.ORIENTATION).facing) {
-			return (T) handler;
-		} else return super.getCapability(capability, facing);
+		if(capability == ITEM_HANDLER) {
+			IBlockState state = world.getBlockState(pos);
+			if(state.getBlock() instanceof BlockWorseBarrel && facing != state.getValue(BlockWorseBarrel.ORIENTATION).facing) {
+				return (T) handler;
+			}
+		}
+		
+		return super.getCapability(capability, facing);
 	}
 }
