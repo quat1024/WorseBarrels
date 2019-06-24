@@ -1,0 +1,26 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "worsebarrels:barrel",
+		"textures": {
+			"side": "minecraft:blocks/concrete_black",
+			"trim": "minecraft:blocks/concrete_black",
+			"front": "worsebarrels:block/front"
+		}
+	},
+	"variants": {
+		"orientation=upright_north": {"x": 0  , "y": 0   },
+		"orientation=upright_east" : {"x": 0  , "y": 90  },
+		"orientation=upright_south": {"x": 0  , "y": 180 },
+		"orientation=upright_west" : {"x": 0  , "y": 270 },
+		"orientation=ceiling_north": {"x": 270, "y": 0   },
+		"orientation=ceiling_east" : {"x": 270, "y": 90  },
+		"orientation=ceiling_south": {"x": 270, "y": 180 },
+		"orientation=ceiling_west" : {"x": 270, "y": 270 },
+		"orientation=floor_north"  : {"x": 90 , "y": 0   },
+		"orientation=floor_east"   : {"x": 90 , "y": 90  },
+		"orientation=floor_south"  : {"x": 90 , "y": 180 },
+		"orientation=floor_west"   : {"x": 90 , "y": 270 },
+		"inventory": [{}]
+	}
+}

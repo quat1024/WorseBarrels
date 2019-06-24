@@ -72,7 +72,7 @@ public class WorseBarrels {
 		if(WorseBarrelsConfig.ALLOW_DISPENSE) {
 			BarrelDispenserBehavior dispensey = new BarrelDispenserBehavior();
 			
-			WorseBarrelsItems.WOOD_BARREL_ITEMS.forEach(i -> {
+			WorseBarrelsItems.BARREL_ITEMS.forEach(i -> {
 				BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(i, dispensey);
 			});
 		}

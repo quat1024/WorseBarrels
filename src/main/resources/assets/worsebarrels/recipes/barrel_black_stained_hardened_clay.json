@@ -1,0 +1,27 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"group": "worsebarrels:terracotta_barrel",
+	"pattern": [
+		"WSW",
+		"WCW",
+		"WSW"
+	],
+	"key": {
+		"W": {
+			"item": "minecraft:stained_hardened_clay",
+			"data": 15
+		},
+		"S": {
+			"type": "forge:ore_dict",
+			"ore": "slabWood"
+		},
+		"C": {
+			"type": "forge:ore_dict",
+			"ore": "chestWood"
+		}
+	},
+	"result": {
+		"item": "worsebarrels:barrel_red_stained_hardened_clay",
+		"count": 4
+	}
+}
