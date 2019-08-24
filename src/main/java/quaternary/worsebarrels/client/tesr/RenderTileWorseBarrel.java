@@ -54,6 +54,7 @@ public class RenderTileWorseBarrel extends TileEntitySpecialRenderer<TileWorseBa
 			GlStateManager.translate(6 / 16d + .001, 0, 0); //<-- additional .001 to avoid Z fighting
 			GlStateManager.rotate(90, 0, 1, 0);
 			GlStateManager.scale(.75, .75, .001); //<-- Flatten the item out
+			GlStateManager.color(1, 1, 1); //maybe this fixes the stateleak??
 			
 			RenderHelper.enableStandardItemLighting();
 			
