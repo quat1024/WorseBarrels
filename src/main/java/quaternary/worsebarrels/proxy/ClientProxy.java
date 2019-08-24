@@ -5,35 +5,26 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import quaternary.worsebarrels.WorseBarrels;
+import quaternary.worsebarrels.etc.EnumBarrelAction;
 import quaternary.worsebarrels.WorseBarrelsConfig;
 import quaternary.worsebarrels.net.WorseBarrelsPacketHandler;
 
 @SuppressWarnings("unused")
 public class ClientProxy extends ServerProxy {
+	private long lastClickTick = 0L;
+	
 	@Override
 	public boolean handleRightClickBarrel(World world, BlockPos pos, EntityPlayer player) {
 		super.handleRightClickBarrel(world, pos, player);
 		if(!world.isRemote) return true;
 		
-		IMessage message;
-		
-		if(player.isSneaking()) {
-			message = WorseBarrelsConfig.SNEAK_RIGHT_CLICK_ACTION.getPacket(pos);
-		} else if(GuiScreen.isCtrlKeyDown()) {
-			message = WorseBarrelsConfig.CTRL_RIGHT_CLICK_ACTION.getPacket(pos);
-		} else {
-			message = WorseBarrelsConfig.RIGHT_CLICK_ACTION.getPacket(pos);
-		}
-		
-		if(message == null) {
-			return false;
-		} else {
-			WorseBarrelsPacketHandler.sendToServer(message);
-			return true;
-		}
+		return handleClick(world, pos, player,
+			WorseBarrelsConfig.SNEAK_RIGHT_CLICK_ACTION,
+			WorseBarrelsConfig.CTRL_RIGHT_CLICK_ACTION,
+			WorseBarrelsConfig.RIGHT_CLICK_ACTION
+		);
 	}
 	
 	@Override
@@ -47,16 +38,35 @@ public class ClientProxy extends ServerProxy {
 		//This tells the calls apart.              : v o l d e t h o n k :
 		if(Minecraft.getMinecraft().playerController.getIsHittingBlock()) return;
 		
-		IMessage message;
+		handleClick(world, pos, player,
+			WorseBarrelsConfig.SNEAK_LEFT_CLICK_ACTION,
+			WorseBarrelsConfig.CTRL_LEFT_CLICK_ACTION,
+			WorseBarrelsConfig.LEFT_CLICK_ACTION
+		);
+	}
+	
+	private boolean handleClick(World world, BlockPos pos, EntityPlayer player, EnumBarrelAction sneak, EnumBarrelAction ctrl, EnumBarrelAction normal) {
+		EnumBarrelAction action;
 		
 		if(player.isSneaking()) {
-			message = WorseBarrelsConfig.SNEAK_LEFT_CLICK_ACTION.getPacket(pos);
+			action = sneak;
 		} else if(GuiScreen.isCtrlKeyDown()) {
-			message = WorseBarrelsConfig.CTRL_LEFT_CLICK_ACTION.getPacket(pos);
+			action = ctrl;
 		} else {
-			message = WorseBarrelsConfig.LEFT_CLICK_ACTION.getPacket(pos);
+			action = normal;
 		}
 		
-		if(message != null)	WorseBarrelsPacketHandler.sendToServer(message);
+		if(world.getTotalWorldTime() - lastClickTick <= WorseBarrelsConfig.DOUBLE_CLICK_TIME) {
+			action = action.doubleClickUpgrade();
+		}
+		
+		if(action == EnumBarrelAction.NOTHING) {
+			return false;
+		} else {
+			IMessage message = action.getPacket(pos);
+			if(message != null) WorseBarrelsPacketHandler.sendToServer(message);
+			lastClickTick = world.getTotalWorldTime();
+			return true;
+		}
 	}
 }

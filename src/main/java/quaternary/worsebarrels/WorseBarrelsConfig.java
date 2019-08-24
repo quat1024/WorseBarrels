@@ -1,21 +1,19 @@
 package quaternary.worsebarrels;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import quaternary.worsebarrels.etc.EnumItemCount;
-import quaternary.worsebarrels.net.MessageInsertBarrelItem;
-import quaternary.worsebarrels.net.MessageRequestBarrelItem;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import quaternary.worsebarrels.etc.EnumBarrelAction;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,6 +28,11 @@ public class WorseBarrelsConfig {
 	public static boolean ALLOW_DISPENSE;
 	
 	public static Set<Item> ITEM_BLACKLIST;
+	public static Set<Item> OFFHAND_SOFT_BLACKLIST;
+	
+	public static int DOUBLE_CLICK_TIME;
+	public static boolean ALLOW_DOUBLE_CLICK_INSERTION;
+	public static boolean ALLOW_DOUBLE_CLICK_REQUESTING;
 	
 	public static EnumBarrelAction LEFT_CLICK_ACTION;
 	public static EnumBarrelAction SNEAK_LEFT_CLICK_ACTION;
@@ -69,34 +72,48 @@ public class WorseBarrelsConfig {
 		
 		config.setCategoryComment("controls", "Interactions with the barrel. These options have no effect on a standalone server.");
 		
-		LEFT_CLICK_ACTION = getEnum(config, "leftClickAction", "controls", EnumBarrelAction.INSERT_ONE, "What happens when you left click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
-		SNEAK_LEFT_CLICK_ACTION = getEnum(config, "sneakLeftClickAction", "controls", EnumBarrelAction.INSERT_STACK, "What happens when you left click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
-		CTRL_LEFT_CLICK_ACTION = getEnum(config, "ctrlLeftClickAction", "controls", EnumBarrelAction.NOTHING, "What happens when you left click on a barrel's face while holding Control?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		DOUBLE_CLICK_TIME = Math.round(20 * config.getFloat("doubleClickTime", "controls", 0.25f, 0, 2f, "A click counts as a 'double click' if it happens at most this many seconds after another click."));
+		ALLOW_DOUBLE_CLICK_INSERTION = config.getBoolean("doubleClickInsert", "controls", true, "Double-clicking will 'upgrade' INSERT_STACK to INSERT_ALL.");
+		ALLOW_DOUBLE_CLICK_REQUESTING = config.getBoolean("doubleClickRequest", "controls", false, "Double-clicking will 'upgrade' REQUEST_STACK to REQUEST_ALL.");
 		
-		RIGHT_CLICK_ACTION = getEnum(config, "rightClickAction", "controls", EnumBarrelAction.REQUEST_ONE, "What happens when you right click on a barrel's face?", EnumBarrelAction::describe, EnumBarrelAction.class);
-		SNEAK_RIGHT_CLICK_ACTION = getEnum(config, "sneakRightClickAction", "controls", EnumBarrelAction.REQUEST_STACK, "What happens when you right click on a barrel's face while holding sneak?", EnumBarrelAction::describe, EnumBarrelAction.class);
-		CTRL_RIGHT_CLICK_ACTION = getEnum(config, "ctrlRightClickAction", "controls", EnumBarrelAction.NOTHING, "What happens when you right click on a barrel's face while holding Control?", EnumBarrelAction::describe, EnumBarrelAction.class);
+		LEFT_CLICK_ACTION = getControl(config, "leftClickAction", EnumBarrelAction.INSERT_ONE, "What happens when you left click on a barrel's face?");
+		SNEAK_LEFT_CLICK_ACTION = getControl(config, "sneakLeftClickAction", EnumBarrelAction.INSERT_STACK, "What happens when you left click on a barrel's face while holding sneak?");
+		CTRL_LEFT_CLICK_ACTION = getControl(config, "ctrlLeftClickAction", EnumBarrelAction.NOTHING, "What happens when you left click on a barrel's face while holding Control?");
+		
+		RIGHT_CLICK_ACTION = getControl(config, "rightClickAction", EnumBarrelAction.REQUEST_ONE, "What happens when you right click on a barrel's face?");
+		SNEAK_RIGHT_CLICK_ACTION = getControl(config, "sneakRightClickAction", EnumBarrelAction.REQUEST_STACK, "What happens when you right click on a barrel's face while holding sneak?");
+		CTRL_RIGHT_CLICK_ACTION = getControl(config, "ctrlRightClickAction", EnumBarrelAction.NOTHING, "What happens when you right click on a barrel's face while holding Control?");
 		
 		//don't save the config yet because readConfigInit will be called soon
 	}
 	
+	private static EnumBarrelAction getControl(Configuration config, String name, EnumBarrelAction defaultBehavior, String description) {
+		return getEnum(config, name, "controls", defaultBehavior, description, EnumBarrelAction::describe, EnumBarrelAction.class);
+	}
+	
 	//Depends on what items are registered, so has to come later.
 	public static void readConfigInit() {
-		ITEM_BLACKLIST = Arrays.stream(
-			config.getStringList("itemBlacklist", "balance", new String[0], "Item IDs that are not allowed to go in barrels. One per line, please, of the form 'modid:name'")
+		ITEM_BLACKLIST = getRegistrySet(config, "itemBlacklist", "balance", "Item IDs that are not allowed to go in barrels. One per line, please, of the form 'modid:name'", Collections.emptySet(), ForgeRegistries.ITEMS);
+		
+		OFFHAND_SOFT_BLACKLIST = getRegistrySet(config, "offhandSoftBlacklist", "behavior", "Items that you cannot fill an empty barrel with from your offhand. (This prevents errant clicks from yoinking your shield, for example.)", Collections.singleton(Items.SHIELD), ForgeRegistries.ITEMS);
+		
+		if(config.hasChanged()) config.save();
+	}
+	
+	private static <T extends IForgeRegistryEntry<T>> Set<T> getRegistrySet(Configuration config, String name, String category, String description, Collection<T> defaultValues, IForgeRegistry<T> registry) {
+		return Arrays.stream(
+			config.getStringList(name, category, defaultValues.stream().map(IForgeRegistryEntry::getRegistryName).map(ResourceLocation::toString).toArray(String[]::new), description)
 		)
 			.map(ResourceLocation::new)
 			.flatMap(res -> {
-				if(ForgeRegistries.ITEMS.containsKey(res)) return Stream.of(res);
+				if(registry.containsKey(res)) return Stream.of(res);
 				else {
-					WorseBarrels.LOGGER.warn("Can't find any item named " + res);
+					WorseBarrels.LOGGER.warn("Can't find any " + res + " when reading option " + name);
 					return Stream.empty();
 				}
 			})
-			.map(ForgeRegistries.ITEMS::getValue)
+			.map(registry::getValue)
 			.collect(Collectors.toSet());
-		
-		if(config.hasChanged()) config.save();
 	}
 	
 	private static <T extends Enum> T getEnum(Configuration config, String configKey, String configCategory, T defaultValue, String comment_, Function<T, String> describerFunction, Class<T> enumClass) {
@@ -138,42 +155,4 @@ public class WorseBarrelsConfig {
 		}
 	}
 	
-	public enum EnumBarrelAction {
-		REQUEST_ONE,
-		REQUEST_STACK,
-		REQUEST_ALL,
-		INSERT_ONE,
-		INSERT_STACK,
-		NOTHING;
-		
-		@Override
-		public String toString() {
-			return super.toString().toLowerCase(Locale.ROOT);
-		}
-		
-		public String describe() {
-			switch(this) {
-				case REQUEST_ONE: return "Request one item from the barrel.";
-				case REQUEST_STACK: return "Request a stack of items from the barrel.";
-				case REQUEST_ALL: return "Request all of the items from the barrel.";
-				case INSERT_ONE: return "Insert one item from your hand into the barrel.";
-				case INSERT_STACK: return "Insert a whole stack of items from your hand into the barrel.";
-				case NOTHING: return "Does nothing.";
-				default: return "Impossible";
-			}
-		}
-		
-		@Nullable
-		public IMessage getPacket(BlockPos pos) {
-			switch(this) {
-				case REQUEST_ONE: return new MessageRequestBarrelItem(pos, EnumItemCount.ONE);
-				case REQUEST_STACK: return new MessageRequestBarrelItem(pos, EnumItemCount.STACK);
-				case REQUEST_ALL: return new MessageRequestBarrelItem(pos, EnumItemCount.ALL);
-				case INSERT_ONE: return new MessageInsertBarrelItem(pos, EnumItemCount.ONE);
-				case INSERT_STACK: return new MessageInsertBarrelItem(pos, EnumItemCount.STACK);
-				case NOTHING: return null;
-				default: return null;
-			}
-		}
-	}
 }

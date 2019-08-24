@@ -1,6 +1,7 @@
 package quaternary.worsebarrels;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.items.*;
@@ -75,5 +76,9 @@ public class Util {
 	public static void naughtyPlayer(MessageContext ctx, String badbad) {
 		WorseBarrels.LOGGER.warn("Disconnecting player " + ctx.getServerHandler().player.getName() + " since they are naughty! Reason: " + badbad);
 		ctx.getServerHandler().disconnect(new TextComponentString(badbad));
+	}
+	
+	public static EnumHand otherHand(EnumHand hand) {
+		return hand == EnumHand.MAIN_HAND ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND;
 	}
 }
