@@ -20,10 +20,10 @@ public class ClientProxy extends ServerProxy {
 		
 		IMessage message;
 		
-		if(GuiScreen.isCtrlKeyDown()) {
-			message = WorseBarrelsConfig.CTRL_RIGHT_CLICK_ACTION.getPacket(pos);
-		} else if(player.isSneaking()) {
+		if(player.isSneaking()) {
 			message = WorseBarrelsConfig.SNEAK_RIGHT_CLICK_ACTION.getPacket(pos);
+		} else if(GuiScreen.isCtrlKeyDown()) {
+			message = WorseBarrelsConfig.CTRL_RIGHT_CLICK_ACTION.getPacket(pos);
 		} else {
 			message = WorseBarrelsConfig.RIGHT_CLICK_ACTION.getPacket(pos);
 		}
@@ -49,10 +49,10 @@ public class ClientProxy extends ServerProxy {
 		
 		IMessage message;
 		
-		if(GuiScreen.isCtrlKeyDown()) {
-			message = WorseBarrelsConfig.CTRL_LEFT_CLICK_ACTION.getPacket(pos);
-		} else if(player.isSneaking()) {
+		if(player.isSneaking()) {
 			message = WorseBarrelsConfig.SNEAK_LEFT_CLICK_ACTION.getPacket(pos);
+		} else if(GuiScreen.isCtrlKeyDown()) {
+			message = WorseBarrelsConfig.CTRL_LEFT_CLICK_ACTION.getPacket(pos);
 		} else {
 			message = WorseBarrelsConfig.LEFT_CLICK_ACTION.getPacket(pos);
 		}
