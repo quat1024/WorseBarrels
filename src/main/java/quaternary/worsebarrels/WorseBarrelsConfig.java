@@ -76,13 +76,13 @@ public class WorseBarrelsConfig {
 		ALLOW_DOUBLE_CLICK_INSERTION = config.getBoolean("doubleClickInsert", "controls", true, "Double-clicking will 'upgrade' INSERT_STACK to INSERT_ALL.");
 		ALLOW_DOUBLE_CLICK_REQUESTING = config.getBoolean("doubleClickRequest", "controls", false, "Double-clicking will 'upgrade' REQUEST_STACK to REQUEST_ALL.");
 		
-		LEFT_CLICK_ACTION = getControl(config, "leftClickAction", EnumBarrelAction.INSERT_ONE, "What happens when you left click on a barrel's face?");
-		SNEAK_LEFT_CLICK_ACTION = getControl(config, "sneakLeftClickAction", EnumBarrelAction.INSERT_STACK, "What happens when you left click on a barrel's face while holding sneak?");
-		CTRL_LEFT_CLICK_ACTION = getControl(config, "ctrlLeftClickAction", EnumBarrelAction.NOTHING, "What happens when you left click on a barrel's face while holding Control?");
+		LEFT_CLICK_ACTION = getControl(config, "leftClickAction", EnumBarrelAction.REQUEST_ONE, "What happens when you left click on a barrel's face?");
+		SNEAK_LEFT_CLICK_ACTION = getControl(config, "sneakLeftClickAction", EnumBarrelAction.REQUEST_STACK, "What happens when you left click on a barrel's face while holding sneak?");
+		CTRL_LEFT_CLICK_ACTION = getControl(config, "ctrlLeftClickAction", EnumBarrelAction.REQUEST_ALL, "What happens when you left click on a barrel's face while holding Control?");
 		
-		RIGHT_CLICK_ACTION = getControl(config, "rightClickAction", EnumBarrelAction.REQUEST_ONE, "What happens when you right click on a barrel's face?");
-		SNEAK_RIGHT_CLICK_ACTION = getControl(config, "sneakRightClickAction", EnumBarrelAction.REQUEST_STACK, "What happens when you right click on a barrel's face while holding sneak?");
-		CTRL_RIGHT_CLICK_ACTION = getControl(config, "ctrlRightClickAction", EnumBarrelAction.NOTHING, "What happens when you right click on a barrel's face while holding Control?");
+		RIGHT_CLICK_ACTION = getControl(config, "rightClickAction", EnumBarrelAction.INSERT_ONE, "What happens when you right click on a barrel's face?");
+		SNEAK_RIGHT_CLICK_ACTION = getControl(config, "sneakRightClickAction", EnumBarrelAction.INSERT_STACK, "What happens when you right click on a barrel's face while holding sneak?");
+		CTRL_RIGHT_CLICK_ACTION = getControl(config, "ctrlRightClickAction", EnumBarrelAction.INSERT_ALL, "What happens when you right click on a barrel's face while holding Control?");
 		
 		//don't save the config yet because readConfigInit will be called soon
 	}
